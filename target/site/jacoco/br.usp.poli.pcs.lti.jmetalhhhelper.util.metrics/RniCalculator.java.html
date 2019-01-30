@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RniCalculator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics</a> &gt; <span class="el_source">RniCalculator.java</span></div><h1>RniCalculator.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics;
+
+import java.io.FileNotFoundException;
+import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
+
+import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
+import org.uma.jmetal.util.front.Front;
+import org.uma.jmetal.util.front.util.FrontUtils;
+
+/**
+ * This class extends Calculator class and perform an evaluation using the
+ * RniCalculator Indicator.
+ */
+public class RniCalculator&lt;S extends Solution&lt;?&gt;&gt; extends Calculator {
+
+  /**
+   * The population size.
+   */
+<span class="nc" id="L22">  private @Getter @Setter int populationMaxSize;</span>
+
+  /**
+   * Instantiates a new Rni.
+   *
+   * @param numberOfObjectives the number of objectives
+   * @param populationMaxSize the population max size
+   * @param path the path
+   * @throws FileNotFoundException the file not found exception
+   */
+  public RniCalculator(int numberOfObjectives, int populationMaxSize, String path)
+      throws FileNotFoundException {
+<span class="fc" id="L34">    super(numberOfObjectives, path);</span>
+<span class="fc" id="L35">    this.populationMaxSize = populationMaxSize;</span>
+<span class="fc" id="L36">    this.indicatorName = &quot;RNI&quot;;</span>
+<span class="fc" id="L37">    lowerValuesAreBetter=false;</span>
+<span class="fc" id="L38">  }</span>
+
+  /**
+   * Instantiates a new Rni calculator.
+   *
+   * @param numberOfObjectives the number of objectives
+   * @param populationMaxSize the population max size
+   * @param referenceFront the reference front
+   */
+  public RniCalculator(int numberOfObjectives, int populationMaxSize, Front referenceFront) {
+<span class="fc" id="L48">    super(numberOfObjectives, referenceFront);</span>
+<span class="fc" id="L49">    this.populationMaxSize = populationMaxSize;</span>
+<span class="fc" id="L50">    this.indicatorName = &quot;RNI&quot;;</span>
+<span class="fc" id="L51">    lowerValuesAreBetter=false;</span>
+<span class="fc" id="L52">  }</span>
+
+  @Override
+  public double calculate(Front front, double[] maximumValues, double[] minimumValues) {
+<span class="fc" id="L56">    List&lt;S&gt; listOfFront = (List&lt;S&gt;) FrontUtils.convertFrontToSolutionList(front);</span>
+<span class="fc" id="L57">    NonDominatedSolutionListArchive ndominated = new NonDominatedSolutionListArchive();</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">    for (Solution s : listOfFront) {</span>
+<span class="fc" id="L59">      ndominated.add(s);</span>
+<span class="fc" id="L60">    }</span>
+<span class="fc" id="L61">    int listSize = ndominated.size();</span>
+<span class="fc" id="L62">    return ((double) listSize) / this.populationMaxSize;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

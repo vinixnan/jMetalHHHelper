@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GdCalculator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics</a> &gt; <span class="el_source">GdCalculator.java</span></div><h1>GdCalculator.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics;
+
+import java.io.FileNotFoundException;
+import java.util.List;
+
+import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
+import org.uma.jmetal.util.front.Front;
+import org.uma.jmetal.util.front.util.FrontNormalizer;
+import org.uma.jmetal.util.front.util.FrontUtils;
+import org.uma.jmetal.util.point.PointSolution;
+
+/**
+ * This class extends Calculator class and perform an evaluation using GD Indicator.
+ */
+public class GdCalculator extends Calculator {
+
+  /**
+   * GD Indicator instance.
+   */
+  private final GenerationalDistance gd;
+
+  /**
+   * Instantiates a new Gd calculator.
+   *
+   * @param numberOfObjectives the number of objectives
+   * @param path the path
+   * @throws FileNotFoundException the file not found exception
+   */
+  public GdCalculator(int numberOfObjectives, String path) throws FileNotFoundException {
+<span class="fc" id="L30">    super(numberOfObjectives, path);</span>
+<span class="fc" id="L31">    this.gd = new GenerationalDistance(paretoTrueFront);</span>
+<span class="fc" id="L32">    this.indicatorName = &quot;GD&quot;;</span>
+<span class="fc" id="L33">    this.lowerValuesAreBetter=gd.isTheLowerTheIndicatorValueTheBetter();</span>
+<span class="fc" id="L34">  }</span>
+
+  /**
+   * Instantiates a new Gd calculator.
+   *
+   * @param numberOfObjectives the number of objectives
+   * @param referenceFront the reference front
+   */
+  public GdCalculator(int numberOfObjectives, Front referenceFront) {
+<span class="fc" id="L43">    super(numberOfObjectives, referenceFront);</span>
+<span class="fc" id="L44">    this.gd = new GenerationalDistance(paretoTrueFront);</span>
+<span class="fc" id="L45">    this.indicatorName = &quot;GD&quot;;</span>
+<span class="fc" id="L46">    this.lowerValuesAreBetter=gd.isTheLowerTheIndicatorValueTheBetter();</span>
+<span class="fc" id="L47">  }</span>
+
+
+  @Override
+  public double calculate(Front front, double[] maximumValues, double[] minimumValues) {
+<span class="fc" id="L52">    double val = 1;</span>
+<span class="pc bpc" id="L53" title="2 of 4 branches missed.">    if (maximumValues != null &amp;&amp; minimumValues != null) {</span>
+<span class="fc" id="L54">      FrontNormalizer frontNormalizer = new FrontNormalizer(minimumValues, maximumValues);</span>
+<span class="fc" id="L55">      Front normalizedFront = frontNormalizer.normalize(front);</span>
+<span class="fc" id="L56">      List&lt;PointSolution&gt; normalizedPopulation = FrontUtils</span>
+<span class="fc" id="L57">          .convertFrontToSolutionList(normalizedFront);</span>
+<span class="fc" id="L58">      val = gd.evaluate(normalizedPopulation);</span>
+    }
+<span class="fc" id="L60">    return val;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

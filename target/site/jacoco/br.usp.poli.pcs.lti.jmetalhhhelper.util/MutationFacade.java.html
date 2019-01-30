@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MutationFacade.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.util</a> &gt; <span class="el_source">MutationFacade.java</span></div><h1>MutationFacade.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.util;
+
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation.BitFlipMuta;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation.IntegerPolynomialMuta;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation.NonUniformMuta;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation.NullMuta;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation.PermutationSwapMuta;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation.PolynomialMuta;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation.SimpleRandomMuta;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation.UniformMuta;
+
+import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+/**
+ * This class contains methods to automatically generates a Mutation Operator.
+ */
+public class MutationFacade extends OperatorFacade {
+
+  /**
+   * Instantiates a new Mutation facade.
+   *
+   * @param maxValues the max values
+   * @param solutionType the solution type
+   */
+  public MutationFacade(Map&lt;String, Object&gt; maxValues, String solutionType) {
+<span class="fc" id="L29">    super(maxValues, solutionType);</span>
+<span class="fc" id="L30">    this.prefix = &quot;muta_&quot;;</span>
+<span class="fc" id="L31">  }</span>
+
+  /**
+   * Random op mutation facade.
+   *
+   * @param mta the mta
+   * @param maxValues the max values
+   * @param currentEva the current eva
+   * @return the mutation facade
+   */
+  public static MutationFacade randomOp(MutationFacade mta, Map&lt;String, Object&gt; maxValues,
+      int currentEva) {
+<span class="fc" id="L43">    return MutationFacade.randomOp(mta, maxValues, currentEva, Integer.MIN_VALUE);</span>
+  }
+
+  /**
+   * Random op mutation facade.
+   *
+   * @param mta the mta
+   * @param maxValues the max values
+   * @param currentEval the current eval
+   * @param typeForChoosing the type for choosing
+   * @return the mutation facade
+   */
+  public static MutationFacade randomOp(MutationFacade mta, Map&lt;String, Object&gt; maxValues,
+      int currentEval, int typeForChoosing) {
+<span class="fc" id="L57">    Random rd = new SecureRandom();</span>
+<span class="fc" id="L58">    Map&lt;String, Object&gt; params = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L59">    params.put(&quot;probability&quot;,</span>
+<span class="fc" id="L60">        OperatorFacade.generateDoubleValue((double) mta.getMaxValues(&quot;probability&quot;)));</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">    if (&quot;Real&quot;.equals(mta.solutionType)) {</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">      if (typeForChoosing == Integer.MIN_VALUE) {</span>
+<span class="fc" id="L63">        typeForChoosing = rd.nextInt(5);</span>
+      }
+<span class="fc bfc" id="L65" title="All 6 branches covered.">      switch (typeForChoosing) {</span>
+        case 0:
+<span class="fc" id="L67">          params.put(&quot;distributionIndex&quot;,</span>
+<span class="fc" id="L68">              OperatorFacade</span>
+<span class="fc" id="L69">                  .generateDoubleValue((double) mta.getMaxValues(&quot;distributionIndex&quot;)));</span>
+<span class="fc" id="L70">          mta.polynomialMutation(params); //probability distributionIndex</span>
+<span class="fc" id="L71">          break;</span>
+        case 1:
+<span class="fc" id="L73">          params.put(&quot;perturbation&quot;,</span>
+<span class="fc" id="L74">              OperatorFacade.generateDoubleValue((double) mta.getMaxValues(&quot;perturbation&quot;)));</span>
+<span class="fc" id="L75">          mta.uniformMutation(params);//probability perturbation</span>
+<span class="fc" id="L76">          break;</span>
+        case 2:
+<span class="fc" id="L78">          params.put(&quot;perturbation&quot;,</span>
+<span class="fc" id="L79">              OperatorFacade.generateDoubleValue((double) mta.getMaxValues(&quot;perturbation&quot;)));</span>
+<span class="fc" id="L80">          params.put(&quot;maxIterations&quot;, ((int) mta.getMaxValues(&quot;maxIterations&quot;)));</span>
+<span class="fc" id="L81">          params.put(&quot;currentIteration&quot;, currentEval);</span>
+<span class="fc" id="L82">          mta.nonUniformMutation(params); //probability perturbation maxIterations</span>
+<span class="fc" id="L83">          break;</span>
+        case 3:
+<span class="fc" id="L85">          mta.nullMutation(params);</span>
+<span class="fc" id="L86">          break;</span>
+        case 4:
+<span class="fc" id="L88">          mta.simpleRandom(params);</span>
+<span class="fc" id="L89">          break;</span>
+        default:
+<span class="fc" id="L91">          params.put(&quot;distributionIndex&quot;,</span>
+<span class="fc" id="L92">              OperatorFacade</span>
+<span class="fc" id="L93">                  .generateDoubleValue((double) mta.getMaxValues(&quot;distributionIndex&quot;)));</span>
+<span class="fc" id="L94">          mta.polynomialMutation(params); //probability distributionIndex</span>
+
+      }
+<span class="fc bfc" id="L97" title="All 2 branches covered.">    } else if (&quot;Permutation&quot;.equals(mta.solutionType)) {</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">      if (typeForChoosing == Integer.MIN_VALUE) {</span>
+<span class="nc" id="L99">        typeForChoosing = rd.nextInt(2);</span>
+      }
+<span class="fc bfc" id="L101" title="All 3 branches covered.">      switch (typeForChoosing) {</span>
+        case 0:
+<span class="fc" id="L103">          mta.permutationSwapMutation(params); //probability</span>
+<span class="fc" id="L104">          break;</span>
+        case 1:
+<span class="fc" id="L106">          mta.nullMutation(params);</span>
+<span class="fc" id="L107">          break;</span>
+        default:
+<span class="fc" id="L109">          mta.permutationSwapMutation(params); //probability</span>
+<span class="fc" id="L110">          break;</span>
+      }
+<span class="fc bfc" id="L112" title="All 2 branches covered.">    } else if (&quot;Binary&quot;.equals(mta.solutionType)) {</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">      if (typeForChoosing == Integer.MIN_VALUE) {</span>
+<span class="nc" id="L114">        typeForChoosing = rd.nextInt(2);</span>
+      }
+<span class="fc bfc" id="L116" title="All 3 branches covered.">      switch (typeForChoosing) {</span>
+        case 0:
+<span class="fc" id="L118">          mta.bitFlipMutation(params); //probability</span>
+<span class="fc" id="L119">          break;</span>
+        case 1:
+<span class="fc" id="L121">          mta.nullMutation(params);</span>
+<span class="fc" id="L122">          break;</span>
+        default:
+<span class="fc" id="L124">          mta.bitFlipMutation(params); //probability</span>
+<span class="fc" id="L125">          break;</span>
+      }
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">    } else if (&quot;Integer&quot;.equals(mta.solutionType)) {</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">      if (typeForChoosing == Integer.MIN_VALUE) {</span>
+<span class="nc" id="L129">        typeForChoosing = rd.nextInt(2);</span>
+      }
+<span class="fc bfc" id="L131" title="All 3 branches covered.">      switch (typeForChoosing) {</span>
+        case 0:
+<span class="fc" id="L133">          params.put(&quot;distributionIndex&quot;,</span>
+<span class="fc" id="L134">              OperatorFacade</span>
+<span class="fc" id="L135">                  .generateDoubleValue((double) mta.getMaxValues(&quot;distributionIndex&quot;)));</span>
+
+<span class="fc" id="L137">          mta.integerPolynomialMutation(params); //probability</span>
+<span class="fc" id="L138">          break;</span>
+        case 1:
+<span class="fc" id="L140">          mta.nullMutation(params);</span>
+<span class="fc" id="L141">          break;</span>
+        default:
+<span class="fc" id="L143">          params.put(&quot;distributionIndex&quot;,</span>
+<span class="fc" id="L144">              OperatorFacade</span>
+<span class="fc" id="L145">                  .generateDoubleValue((double) mta.getMaxValues(&quot;distributionIndex&quot;)));</span>
+
+<span class="fc" id="L147">          mta.integerPolynomialMutation(params); //probability</span>
+          break;
+      }
+    }
+<span class="fc" id="L151">    mta.getOp().allocateParameters();</span>
+<span class="fc" id="L152">    return mta;</span>
+  }
+
+  /**
+   * Random op mutation facade.
+   *
+   * @param maxValues the max values
+   * @param currentEval the current eval
+   * @param solutionType the solution type
+   * @return the mutation facade
+   */
+  public static MutationFacade randomOp(Map&lt;String, Object&gt; maxValues, int currentEval,
+      String solutionType) {
+<span class="fc" id="L165">    MutationFacade mta = new MutationFacade(maxValues, solutionType);</span>
+<span class="fc" id="L166">    return MutationFacade.randomOp(mta, maxValues, currentEval);</span>
+  }
+
+  /**
+   * Polynomial mutation.
+   *
+   * @param params the params
+   */
+  public void polynomialMutation(Map params) {
+<span class="fc" id="L175">    this.op = new PolynomialMuta();</span>
+<span class="fc" id="L176">    this.op.setParameters(params);</span>
+<span class="fc" id="L177">  }</span>
+
+  /**
+   * Bit flip mutation.
+   *
+   * @param params the params
+   */
+  public void bitFlipMutation(Map params) {
+<span class="fc" id="L185">    this.op = new BitFlipMuta();</span>
+<span class="fc" id="L186">    this.op.setParameters(params);</span>
+<span class="fc" id="L187">  }</span>
+
+  /**
+   * Non uniform mutation.
+   *
+   * @param params the params
+   */
+  public void nonUniformMutation(Map params) {
+<span class="fc" id="L195">    this.op = new NonUniformMuta();</span>
+<span class="fc" id="L196">    this.op.setParameters(params);</span>
+<span class="fc" id="L197">  }</span>
+
+  /**
+   * Uniform mutation.
+   *
+   * @param params the params
+   */
+  public void uniformMutation(Map params) {
+<span class="fc" id="L205">    this.op = new UniformMuta();</span>
+<span class="fc" id="L206">    this.op.setParameters(params);</span>
+<span class="fc" id="L207">  }</span>
+
+  private void integerPolynomialMutation(Map&lt;String, Object&gt; params) {
+<span class="fc" id="L210">    this.op = new IntegerPolynomialMuta();</span>
+<span class="fc" id="L211">    this.op.setParameters(params);</span>
+<span class="fc" id="L212">  }</span>
+
+  private void permutationSwapMutation(Map&lt;String, Object&gt; params) {
+<span class="fc" id="L215">    this.op = new PermutationSwapMuta();</span>
+<span class="fc" id="L216">    this.op.setParameters(params);</span>
+<span class="fc" id="L217">  }</span>
+
+  /**
+   * Simple random.
+   *
+   * @param params the params
+   */
+  public void simpleRandom(Map&lt;String, Object&gt; params) {
+<span class="fc" id="L225">    this.op = new SimpleRandomMuta();</span>
+<span class="fc" id="L226">    this.op.setParameters(params);</span>
+<span class="fc" id="L227">  }</span>
+
+  /**
+   * Null mutation.
+   *
+   * @param params the params
+   */
+  public void nullMutation(Map params) {
+<span class="fc" id="L235">    this.op = new NullMuta();</span>
+<span class="fc" id="L236">    this.op.setParameters(params);</span>
+<span class="fc" id="L237">  }</span>
+
+  @Override
+  public OperatorFacade cloneMySelf() {
+<span class="fc" id="L241">    MutationFacade mf = new MutationFacade(maxValues, this.solutionType);</span>
+<span class="fc" id="L242">    Map&lt;String, Object&gt; params = this.getParams();</span>
+<span class="fc" id="L243">    Map&lt;String, Object&gt; dummy = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L244">    dummy.put(&quot;probability&quot;, 0.0);</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">    if (this.op instanceof PolynomialMuta) {</span>
+<span class="fc" id="L246">      dummy.put(&quot;distributionIndex&quot;, 0.0);</span>
+<span class="fc" id="L247">      mf.polynomialMutation(dummy);</span>
+<span class="fc bfc" id="L248" title="All 2 branches covered.">    } else if (this.op instanceof IntegerPolynomialMuta) {</span>
+<span class="fc" id="L249">      dummy.put(&quot;distributionIndex&quot;, 0.0);</span>
+<span class="fc" id="L250">      mf.integerPolynomialMutation(dummy);</span>
+<span class="fc bfc" id="L251" title="All 2 branches covered.">    } else if (this.op instanceof NullMuta) {</span>
+<span class="fc" id="L252">      mf.nullMutation(dummy);</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">    } else if (this.op instanceof BitFlipMuta) {</span>
+<span class="fc" id="L254">      mf.bitFlipMutation(dummy);</span>
+<span class="fc bfc" id="L255" title="All 2 branches covered.">    } else if (this.op instanceof PermutationSwapMuta) {</span>
+<span class="fc" id="L256">      mf.permutationSwapMutation(dummy);</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">    } else if (this.op instanceof SimpleRandomMuta) {</span>
+<span class="fc" id="L258">      mf.simpleRandom(dummy);</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">    } else if (this.op instanceof UniformMuta) {</span>
+<span class="fc" id="L260">      dummy.put(&quot;perturbation&quot;, 0.0);</span>
+<span class="fc" id="L261">      mf.uniformMutation(dummy);</span>
+<span class="pc bpc" id="L262" title="1 of 2 branches missed.">    } else if (this.op instanceof NonUniformMuta) {</span>
+<span class="fc" id="L263">      dummy.put(&quot;perturbation&quot;, 0.0);</span>
+<span class="fc" id="L264">      dummy.put(&quot;maxIterations&quot;, ((int) this.getMaxValues(&quot;maxIterations&quot;)));</span>
+<span class="fc" id="L265">      dummy.put(&quot;currentIteration&quot;, 0);</span>
+<span class="fc" id="L266">      mf.nonUniformMutation(dummy);</span>
+    }
+<span class="fc" id="L268">    mf.setParams(params);</span>
+<span class="fc" id="L269">    return mf;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

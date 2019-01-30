@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UDMetricHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics</a> &gt; <span class="el_source">UDMetricHandler.java</span></div><h1>UDMetricHandler.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics;
+
+import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.List;
+import org.apache.commons.math3.stat.StatUtils;
+import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
+import org.uma.jmetal.util.distance.impl.EuclideanDistanceBetweenSolutionsInObjectiveSpace;
+import org.uma.jmetal.util.front.Front;
+import org.uma.jmetal.util.front.util.FrontUtils;
+
+public class UDMetricHandler&lt;S extends Solution&lt;?&gt;&gt; extends Calculator {
+
+    protected final double sigmaShare;
+
+    public UDMetricHandler(int numObj) {
+<span class="nc" id="L18">        super(numObj);</span>
+<span class="nc" id="L19">        sigmaShare = 0.1;</span>
+<span class="nc" id="L20">        lowerValuesAreBetter=false;</span>
+<span class="nc" id="L21">    }</span>
+
+    public UDMetricHandler(int numberOfObjectives, Front paretoFront) {
+<span class="nc" id="L24">        super(numberOfObjectives, paretoFront);</span>
+<span class="nc" id="L25">        sigmaShare = 0.1;</span>
+<span class="nc" id="L26">        lowerValuesAreBetter=false;</span>
+<span class="nc" id="L27">    }</span>
+
+    public UDMetricHandler(int numberOfObjectives, String path) throws FileNotFoundException {
+<span class="nc" id="L30">        super(numberOfObjectives, path);</span>
+<span class="nc" id="L31">        sigmaShare = 0.1;</span>
+<span class="nc" id="L32">        lowerValuesAreBetter=false;</span>
+<span class="nc" id="L33">    }</span>
+    
+    
+
+    protected double snc(double[] nicheCount) {
+<span class="nc" id="L38">        double sum = 0;</span>
+<span class="nc" id="L39">        double nicheMean = StatUtils.mean(nicheCount);</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        for (int i = 0; i &lt; nicheCount.length; i++) {</span>
+<span class="nc" id="L41">            sum += Math.pow((nicheCount[i] - nicheMean), 2);</span>
+        }
+<span class="nc" id="L43">        double frac = (sum / (nicheCount.length - 1));</span>
+<span class="nc" id="L44">        return Math.sqrt(frac);</span>
+    }
+
+    protected double[] calculateNicheCount(double[][] distanceMatrix) {
+<span class="nc" id="L48">        double[] nicheCount = new double[distanceMatrix.length];</span>
+<span class="nc" id="L49">        Arrays.fill(nicheCount, 0D);</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        for (int i = 0; i &lt; distanceMatrix.length; i++) {</span>
+<span class="nc" id="L51">            double sum = 0;</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">            for (int j = 0; j &lt; distanceMatrix[i].length; j++) {</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">                if (j != i) {</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">                    sum += (distanceMatrix[i][j] &lt; sigmaShare) ? 1D : 0D;//(1 - Math.pow(dist/sigmaShare, 2))</span>
+                }
+            }
+<span class="nc" id="L57">            nicheCount[i] = sum;</span>
+        }
+<span class="nc" id="L59">        return nicheCount;</span>
+    }
+
+    protected double[][] calculatePopulationDistances(List&lt;S&gt; population) {
+<span class="nc" id="L63">        EuclideanDistanceBetweenSolutionsInObjectiveSpace distance = new EuclideanDistanceBetweenSolutionsInObjectiveSpace();</span>
+<span class="nc" id="L64">        double[][] distances = new double[population.size()][population.size()];</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        for (int i = 0; i &lt; population.size(); i++) {</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">            for (int j = 0; j &lt; population.size(); j++) {</span>
+<span class="nc" id="L67">                distances[i][j] = distance.getDistance(population.get(i), population.get(j));</span>
+            }
+        }
+<span class="nc" id="L70">        return distances;</span>
+    }
+
+    @Override
+    public double calculate(Front front, double[] doubles, double[] doubles1) {
+<span class="nc" id="L75">        List&lt;S&gt; listOfFront = (List&lt;S&gt;) FrontUtils.convertFrontToSolutionList(front);</span>
+<span class="nc" id="L76">        NonDominatedSolutionListArchive ndominated = new NonDominatedSolutionListArchive();</span>
+<span class="nc" id="L77">        listOfFront.forEach((s) -&gt; {ndominated.add(s);});</span>
+<span class="nc" id="L78">        double[][] distanceMatrix = calculatePopulationDistances(ndominated.getSolutionList());</span>
+<span class="nc" id="L79">        double[] nicheCount = calculateNicheCount(distanceMatrix);</span>
+<span class="nc" id="L80">        double snc = this.snc(nicheCount);</span>
+<span class="nc" id="L81">        return 1D / (1D + snc);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

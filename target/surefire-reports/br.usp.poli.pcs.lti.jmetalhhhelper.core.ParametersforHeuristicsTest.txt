@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: br.usp.poli.pcs.lti.jmetalhhhelper.core.ParametersforHeuristicsTest
+-------------------------------------------------------------------------------
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.151 sec - in br.usp.poli.pcs.lti.jmetalhhhelper.core.ParametersforHeuristicsTest

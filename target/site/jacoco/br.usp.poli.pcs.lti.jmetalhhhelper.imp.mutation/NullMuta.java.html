@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NullMuta.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation</a> &gt; <span class="el_source">NullMuta.java</span></div><h1>NullMuta.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation;
+
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.interfaces.Operator;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.uma.jmetal.operator.impl.mutation.NullMutation;
+import org.uma.jmetal.solution.Solution;
+
+/**
+ * This class extends the jMetal mutation class and implements Operator interface. This was created
+ * to use polymorphism without changes jMetal mutation class.
+ */
+
+/**
+ * @param &lt;S&gt; necessary because of jMetal.
+ */
+@SuppressWarnings(&quot;serial&quot;)
+public class NullMuta&lt;S extends Solution&lt;?&gt;&gt; extends NullMutation&lt;S&gt; implements
+    Operator {
+
+  /**
+   * Map which contains all operator parameters.
+   */
+  protected Map&lt;String, Object&gt; parameters;
+
+  /**
+   * Default constructor.
+   */
+<span class="fc" id="L31">  public NullMuta() {</span>
+<span class="fc" id="L32">    parameters = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L33">  }</span>
+
+  @Override
+  public void allocateParameters() {
+
+<span class="fc" id="L38">  }</span>
+
+  @Override
+  public void setParameter(String attributeName, Object value) {
+<span class="fc" id="L42">    this.parameters.put(attributeName, value);</span>
+<span class="fc" id="L43">  }</span>
+
+  @Override
+  public Object getParameter(String attributeName) {
+<span class="fc" id="L47">    return this.parameters.getOrDefault(attributeName, null);</span>
+  }
+
+  @Override
+  public Map&lt;String, Object&gt; getParameters() {
+<span class="fc" id="L52">    return parameters;</span>
+  }
+
+  @Override
+  public void setParameters(Map&lt;String, Object&gt; parameters) {
+<span class="fc" id="L57">    this.parameters = parameters;</span>
+<span class="fc" id="L58">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

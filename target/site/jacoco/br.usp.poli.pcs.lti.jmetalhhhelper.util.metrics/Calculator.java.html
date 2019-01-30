@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Calculator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics</a> &gt; <span class="el_source">Calculator.java</span></div><h1>Calculator.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics;
+
+import java.io.FileNotFoundException;
+import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
+
+import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.front.Front;
+import org.uma.jmetal.util.front.imp.ArrayFront;
+import org.uma.jmetal.util.front.util.FrontNormalizer;
+import org.uma.jmetal.util.front.util.FrontUtils;
+
+/**
+ * This abstract class contains methods to prepare populations before calculate an
+ * indicator value.
+ */
+public abstract class Calculator {
+
+  /**
+   * The Maximum Reference values.
+   */
+  protected double[] maximumValues;
+  /**
+   * The Minimum Reference values.
+   */
+  protected double[] minimumValues;
+  /**
+   * The Pareto true front.
+   */
+  protected Front paretoTrueFront;
+  /**
+   * The Number of objectives.
+   */
+  protected int numberOfObjectives;
+
+  /**
+   * The Quality Indicator name.
+   */
+  protected String indicatorName;
+  
+  /**
+   * It tells if higher values are better than lowers.
+   */
+<span class="nc" id="L45">  protected @Getter @Setter boolean lowerValuesAreBetter;</span>
+
+
+  /**
+   * Instantiates a new Calculator.
+   *
+   * @param numberOfObjectives the number of objectives
+   */
+<span class="fc" id="L53">  public Calculator(int numberOfObjectives) {</span>
+<span class="fc" id="L54">    this.numberOfObjectives = numberOfObjectives;</span>
+<span class="fc" id="L55">    paretoTrueFront = null;</span>
+<span class="fc" id="L56">    this.maximumValues = null;</span>
+<span class="fc" id="L57">    this.minimumValues = null;</span>
+<span class="fc" id="L58">    lowerValuesAreBetter=true;</span>
+<span class="fc" id="L59">  }</span>
+
+  /**
+   * Instantiates a new Calculator.
+   *
+   * @param numberOfObjectives the number of objectives
+   * @param paretoFront the pareto front
+   */
+<span class="fc" id="L67">  public Calculator(int numberOfObjectives, Front paretoFront) {</span>
+<span class="fc" id="L68">    this.numberOfObjectives = numberOfObjectives;</span>
+    //to test
+    //List&lt;PointSolution&gt; notDominatedFront=SolutionListUtils.getNondominatedSolutions(FrontUtils.convertFrontToSolutionList(paretoFront));
+    //paretoFront=new ArrayFront(notDominatedFront);
+    //to test
+<span class="fc" id="L73">    lowerValuesAreBetter=true;</span>
+<span class="fc" id="L74">    setParetoTrueFront(paretoFront);</span>
+<span class="fc" id="L75">  }</span>
+
+  /**
+   * Instantiates a new Calculator.
+   *
+   * @param numberOfObjectives the number of objectives
+   * @param path the path of Pareto Front
+   * @throws FileNotFoundException the file not found exception
+   */
+  public Calculator(int numberOfObjectives, String path) throws FileNotFoundException {
+<span class="fc" id="L85">    this(numberOfObjectives, new ArrayFront(path));</span>
+<span class="fc" id="L86">  }</span>
+
+  /**
+   * Add a front to pareto front. It gonna find new min and max refeverence values.
+   *
+   * @param front the front
+   */
+  public void addParetoFront(Front front) {
+<span class="fc" id="L94">    double[] tempMinimum = FrontUtils.getMinimumValues(front);</span>
+<span class="fc" id="L95">    double[] tempMaximum = FrontUtils.getMaximumValues(front);</span>
+
+<span class="fc" id="L97">    addMinMaxReference(tempMinimum, tempMaximum);</span>
+<span class="fc" id="L98">  }</span>
+
+  /**
+   * Update min and max reference.
+   *
+   * @param tempMinimum the temp minimum
+   * @param tempMaximum the temp maximum
+   */
+  protected void addMinMaxReference(double[] tempMinimum, double[] tempMaximum) {
+    // Compare min
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">    if (minimumValues == null) {</span>
+<span class="fc" id="L109">      minimumValues = tempMinimum;</span>
+    } else {
+<span class="nc bnc" id="L111" title="All 2 branches missed.">      for (int i = 0; i &lt; tempMinimum.length; i++) {</span>
+<span class="nc" id="L112">        minimumValues[i] = Double.min(tempMinimum[i], minimumValues[i]);</span>
+      }
+    }
+
+    // Compare max
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">    if (maximumValues == null) {</span>
+<span class="fc" id="L118">      maximumValues = tempMaximum;</span>
+    } else {
+<span class="nc bnc" id="L120" title="All 2 branches missed.">      for (int i = 0; i &lt; tempMaximum.length; i++) {</span>
+<span class="nc" id="L121">        maximumValues[i] = Double.max(tempMaximum[i], maximumValues[i]);</span>
+      }
+    }
+<span class="fc" id="L124">  }</span>
+
+  /**
+   * Clear.
+   */
+  public void clear() {
+<span class="fc" id="L130">    this.minimumValues = null;</span>
+<span class="fc" id="L131">    this.maximumValues = null;</span>
+<span class="fc" id="L132">  }</span>
+
+  /**
+   * Execute double.
+   *
+   * @param frontPath the front path
+   * @return the double
+   * @throws FileNotFoundException the file not found exception
+   */
+  public double execute(String frontPath) throws FileNotFoundException {
+<span class="fc" id="L142">    return calculate(new ArrayFront(frontPath), maximumValues, minimumValues);</span>
+  }
+
+  /**
+   * Execute to get indicator value double.
+   *
+   * @param front the front
+   * @return the double
+   */
+  public double execute(Front front) {
+<span class="fc" id="L152">    return calculate(front, maximumValues, minimumValues);</span>
+  }
+
+  /**
+   * Execute to get indicator value double.
+   *
+   * @param front the front
+   * @return the double
+   */
+  public double execute(List&lt;? extends Solution&lt;?&gt;&gt; front) {
+<span class="fc" id="L162">    return calculate(new ArrayFront(front), maximumValues, minimumValues);</span>
+  }
+
+  /**
+   * Execute to get indicator value double.
+   *
+   * @param front the front
+   * @param maximumValues the maximum values
+   * @param minimumValues the minimum values
+   * @return the double
+   */
+  public double execute(List&lt;? extends Solution&lt;?&gt;&gt; front, double[] maximumValues,
+      double[] minimumValues) {
+<span class="nc" id="L175">    return calculate(new ArrayFront(front), maximumValues, minimumValues);</span>
+  }
+
+  /**
+   * Execute to get indicator value double.
+   *
+   * @param front the front
+   * @param maximumValues the maximum values
+   * @param minimumValues the minimum values
+   * @return the double
+   */
+  public double execute(Front front, double[] maximumValues, double[] minimumValues) {
+<span class="nc" id="L187">    return calculate(front, maximumValues, minimumValues);</span>
+  }
+
+  /**
+   * Gets pareto true front.
+   *
+   * @return the pareto true front
+   */
+  public Front getParetoTrueFront() {
+<span class="nc" id="L196">    return paretoTrueFront;</span>
+  }
+
+  /**
+   * Sets pareto true front.
+   *
+   * @param paretoTrueFront the pareto true front
+   */
+  public void setParetoTrueFront(Front paretoTrueFront) {
+<span class="fc" id="L205">    this.maximumValues = null;</span>
+<span class="fc" id="L206">    this.minimumValues = null;</span>
+<span class="fc" id="L207">    addParetoFront(paretoTrueFront);</span>
+<span class="fc" id="L208">    FrontNormalizer frontNormalizer = new FrontNormalizer(minimumValues, maximumValues);</span>
+<span class="fc" id="L209">    Front normalizedFront = frontNormalizer.normalize(paretoTrueFront);</span>
+<span class="fc" id="L210">    this.paretoTrueFront = normalizedFront;</span>
+<span class="fc" id="L211">  }</span>
+  
+  public void setMinMax(double[] minimumValues, double[] maximumValues) {
+<span class="nc" id="L214">    this.maximumValues = maximumValues;</span>
+<span class="nc" id="L215">    this.minimumValues = minimumValues;</span>
+<span class="nc" id="L216">  }</span>
+
+  /**
+   * Gets name.
+   *
+   * @return the name
+   */
+  public String getName() {
+<span class="fc" id="L224">    return indicatorName;</span>
+  }
+
+  /**
+   * Execute to get indicator value double.
+   *
+   * @param front the front
+   * @param maximumValues the maximum values
+   * @param minimumValues the minimum values
+   * @return the double
+   */
+  public abstract double calculate(Front front, double[] maximumValues, double[] minimumValues);
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

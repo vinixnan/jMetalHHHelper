@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IgdPlusCalculator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics</a> &gt; <span class="el_source">IgdPlusCalculator.java</span></div><h1>IgdPlusCalculator.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics;
+
+import java.io.FileNotFoundException;
+import java.util.List;
+
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
+import org.uma.jmetal.util.front.Front;
+import org.uma.jmetal.util.front.util.FrontNormalizer;
+import org.uma.jmetal.util.front.util.FrontUtils;
+import org.uma.jmetal.util.point.PointSolution;
+
+/**
+ * This class extends Calculator class and perform an evaluation using IGD
+ * Indicator.
+ */
+public class IgdPlusCalculator extends Calculator {
+
+  /**
+   * IGD indicator instance.
+   */
+  private final InvertedGenerationalDistancePlus igd;
+
+  /**
+   * Instantiates a new Igd calculator.
+   *
+   * @param numberOfObjectives the number of objectives
+   * @param path the path
+   * @throws java.io.FileNotFoundException file not found.
+   */
+  public IgdPlusCalculator(int numberOfObjectives, String path) throws FileNotFoundException {
+<span class="nc" id="L31">    super(numberOfObjectives, path);</span>
+<span class="nc" id="L32">    this.igd = new InvertedGenerationalDistancePlus(paretoTrueFront);</span>
+<span class="nc" id="L33">    this.indicatorName = &quot;IGDPlus&quot;;</span>
+<span class="nc" id="L34">    this.lowerValuesAreBetter=igd.isTheLowerTheIndicatorValueTheBetter();</span>
+<span class="nc" id="L35">  }</span>
+
+  /**
+   * Instantiates a new Igd calculator.
+   *
+   * @param numberOfObjectives the number of objectives
+   * @param paretoFront the pareto front
+   */
+  public IgdPlusCalculator(int numberOfObjectives, Front paretoFront) {
+<span class="nc" id="L44">    super(numberOfObjectives, paretoFront);</span>
+<span class="nc" id="L45">    this.igd = new InvertedGenerationalDistancePlus(paretoTrueFront);</span>
+<span class="nc" id="L46">    this.indicatorName = &quot;IGDPlus&quot;;</span>
+<span class="nc" id="L47">    this.lowerValuesAreBetter=igd.isTheLowerTheIndicatorValueTheBetter();</span>
+<span class="nc" id="L48">  }</span>
+
+
+  @Override
+  public double calculate(Front front, double[] maximumValues, double[] minimumValues) {
+<span class="nc" id="L53">    double val = 1;</span>
+<span class="nc bnc" id="L54" title="All 4 branches missed.">    if (maximumValues != null &amp;&amp; minimumValues != null) {</span>
+<span class="nc" id="L55">      FrontNormalizer frontNormalizer = new FrontNormalizer(minimumValues, maximumValues);</span>
+<span class="nc" id="L56">      Front normalizedFront = frontNormalizer.normalize(front);</span>
+<span class="nc" id="L57">      List&lt;PointSolution&gt; normalizedPopulation = FrontUtils</span>
+<span class="nc" id="L58">          .convertFrontToSolutionList(normalizedFront);</span>
+<span class="nc" id="L59">      val = igd.evaluate(normalizedPopulation);</span>
+    }
+<span class="nc" id="L61">    return val;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

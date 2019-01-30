@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IntegerPolynomialMuta.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation</a> &gt; <span class="el_source">IntegerPolynomialMuta.java</span></div><h1>IntegerPolynomialMuta.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation;
+
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.interfaces.Operator;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.uma.jmetal.operator.impl.mutation.IntegerPolynomialMutation;
+import org.uma.jmetal.problem.IntegerProblem;
+import org.uma.jmetal.solution.util.RepairDoubleSolution;
+
+/**
+ * The type Integer polynomial muta.
+ * This class extends the jMetal mutation class and implements Operator
+ * interface. This was         created to use polymorphism without changes jMetal mutation
+ * class.
+ */
+@SuppressWarnings(&quot;serial&quot;)
+public class IntegerPolynomialMuta extends IntegerPolynomialMutation implements
+    Operator {
+
+  /**
+   * Map which contains all operator parameters.
+   */
+  protected Map&lt;String, Object&gt; parameters;
+
+  /**
+   * Default constructor.
+   */
+<span class="fc" id="L30">  public IntegerPolynomialMuta() {</span>
+<span class="fc" id="L31">    parameters = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L32">  }</span>
+
+  /**
+   * Instantiates a new Integer polynomial muta.
+   *
+   * @param problem the problem
+   * @param distributionIndex the distribution index
+   */
+  public IntegerPolynomialMuta(IntegerProblem problem, double distributionIndex) {
+<span class="fc" id="L41">    super(problem, distributionIndex);</span>
+<span class="fc" id="L42">    parameters = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L43">  }</span>
+
+  /**
+   * Instantiates a new Integer polynomial muta.
+   *
+   * @param mutationProbability the mutation probability
+   * @param distributionIndex the distribution index
+   */
+  public IntegerPolynomialMuta(double mutationProbability, double distributionIndex) {
+<span class="fc" id="L52">    super(mutationProbability, distributionIndex);</span>
+<span class="fc" id="L53">    parameters = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L54">  }</span>
+
+  /**
+   * Instantiates a new Integer polynomial muta.
+   *
+   * @param mutationProbability the mutation probability
+   * @param distributionIndex the distribution index
+   * @param solutionRepair the solution repair
+   */
+  public IntegerPolynomialMuta(double mutationProbability, double distributionIndex,
+      RepairDoubleSolution solutionRepair) {
+<span class="fc" id="L65">    super(mutationProbability, distributionIndex, solutionRepair);</span>
+<span class="fc" id="L66">    parameters = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L67">  }</span>
+
+  @Override
+  public void allocateParameters() {
+<span class="fc" id="L71">    this.setDistributionIndex((double) this.parameters.get(&quot;distributionIndex&quot;));</span>
+<span class="fc" id="L72">    this.setMutationProbability((double) this.parameters.get(&quot;probability&quot;));</span>
+<span class="fc" id="L73">  }</span>
+
+  @Override
+  public void setParameter(String attributeName, Object value) {
+<span class="fc" id="L77">    this.parameters.put(attributeName, value);</span>
+<span class="fc" id="L78">  }</span>
+
+  @Override
+  public Object getParameter(String attributeName) {
+<span class="fc" id="L82">    return this.parameters.getOrDefault(attributeName, null);</span>
+  }
+
+  @Override
+  public Map&lt;String, Object&gt; getParameters() {
+<span class="fc" id="L87">    return parameters;</span>
+  }
+
+  @Override
+  public void setParameters(Map&lt;String, Object&gt; parameters) {
+<span class="fc" id="L92">    this.parameters = parameters;</span>
+<span class="fc" id="L93">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CrashWorthiness.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.problems</a> &gt; <span class="el_source">CrashWorthiness.java</span></div><h1>CrashWorthiness.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.problems;
+
+import org.uma.jmetal.problem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.DoubleSolution;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class CrashWorthiness extends AbstractDoubleProblem {
+
+    private static final long serialVersionUID = -6291831458123882892L;
+
+    /**
+     * Constructor
+     */
+<span class="nc" id="L16">    public CrashWorthiness() {</span>
+<span class="nc" id="L17">        setNumberOfVariables(5);</span>
+<span class="nc" id="L18">        setNumberOfObjectives(3);</span>
+<span class="nc" id="L19">        setNumberOfConstraints(0);</span>
+<span class="nc" id="L20">        setName(&quot;CrashWorthiness&quot;);</span>
+<span class="nc" id="L21">        List&lt;Double&gt; lowerLimit = new ArrayList&lt;&gt;(getNumberOfVariables());</span>
+<span class="nc" id="L22">        List&lt;Double&gt; upperLimit = new ArrayList&lt;&gt;(getNumberOfVariables());</span>
+
+<span class="nc bnc" id="L24" title="All 2 branches missed.">        for (int i = 0; i &lt; getNumberOfVariables(); i++) {</span>
+<span class="nc" id="L25">            lowerLimit.add(1.0);</span>
+<span class="nc" id="L26">            upperLimit.add(3.0);</span>
+        }
+<span class="nc" id="L28">        setLowerLimit(lowerLimit);</span>
+<span class="nc" id="L29">        setUpperLimit(upperLimit);</span>
+<span class="nc" id="L30">    }</span>
+
+    /**
+     * Evaluate() method
+     *
+     * @param solution
+     */
+    @Override
+    public void evaluate(DoubleSolution solution) {
+<span class="nc" id="L39">        double[] var = new double[getNumberOfVariables()];</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        for (int i = 0; i &lt; getNumberOfVariables(); i++) {</span>
+<span class="nc" id="L41">            var[i] = solution.getVariableValue(i);</span>
+        }
+
+<span class="nc" id="L44">        double obj1 = 1640.2823 + 2.3573285 * var[0] + 2.3220035 * var[1] + 4.5688768 * var[2] + 7.7213633 * var[3] + 4.4559504 * var[4];</span>
+<span class="nc" id="L45">        double obj2 = 6.5856 + 1.15 * var[0] - 1.0427 * var[1] + 0.9738 * var[2] + 0.8364 * var[3] - 0.3695 * var[0] * var[3] + 0.0861 * var[0] * var[4] + 0.3628 * var[1] * var[3] - 0.1106 * var[0] * var[0] - 0.3437 * var[2] * var[2] + 0.1764 * var[3] * var[3];</span>
+<span class="nc" id="L46">        double obj3 = -0.0551 + 0.0181 * var[0] + 0.1024 * var[1] + 0.0421 * var[2] - 0.0073 * var[0] * var[1] + 0.024 * var[1] * var[2] - 0.0118 * var[1] * var[3] - 0.0204 * var[2] * var[3] - 0.008 * var[2] * var[4] - 0.0241 * var[1] * var[1] + 0.0109 * var[3] * var[3];</span>
+
+<span class="nc" id="L48">        solution.setObjective(0, obj1);</span>
+<span class="nc" id="L49">        solution.setObjective(1, obj2);</span>
+<span class="nc" id="L50">        solution.setObjective(2, obj3);</span>
+<span class="nc" id="L51">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

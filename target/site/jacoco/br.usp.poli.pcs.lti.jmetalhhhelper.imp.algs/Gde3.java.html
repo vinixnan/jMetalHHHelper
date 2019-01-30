@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Gde3.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.imp.algs</a> &gt; <span class="el_source">Gde3.java</span></div><h1>Gde3.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.imp.algs;
+
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.DoubleTaggedSolution;
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.OpManager;
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.TaggedSolution;
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.interfaces.StandardMetaheuristic;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import org.uma.jmetal.algorithm.multiobjective.gde3.GDE3;
+import org.uma.jmetal.operator.CrossoverOperator;
+import org.uma.jmetal.operator.MutationOperator;
+import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
+import org.uma.jmetal.operator.impl.selection.DifferentialEvolutionSelection;
+import org.uma.jmetal.problem.DoubleProblem;
+import org.uma.jmetal.solution.DoubleSolution;
+import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.solution.impl.DefaultDoubleSolution;
+import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
+import org.uma.jmetal.util.solutionattribute.Ranking;
+
+/**
+ *
+ * @author vinicius
+ */
+public class Gde3&lt;S extends Solution&lt;?&gt;&gt; extends GDE3 implements StandardMetaheuristic&lt;S&gt; {
+
+    /**
+     * Low-Level Heuristic Selector.
+     */
+    protected OpManager selector;
+    protected int maxIterations;
+    protected int iterations;
+    protected int realSize;
+
+    protected List&lt;DoubleSolution&gt; offspringPopulation;
+
+    public Gde3(DoubleProblem problem, int populationSize, int maxEvaluations, DifferentialEvolutionSelection selection, DifferentialEvolutionCrossover crossover, SolutionListEvaluator&lt;DoubleSolution&gt; evaluator) {
+<span class="nc" id="L40">        super(problem, populationSize, maxEvaluations, selection, crossover, evaluator);</span>
+<span class="nc" id="L41">        selector = new OpManager();</span>
+<span class="nc" id="L42">        selector.setCrossoverOperator(crossover);</span>
+<span class="nc" id="L43">        selector.setMutationOperator(null);</span>
+<span class="nc" id="L44">        maxIterations = maxEvaluations / populationSize;</span>
+<span class="nc" id="L45">        iterations = 0;</span>
+<span class="nc" id="L46">        realSize = populationSize;</span>
+<span class="nc" id="L47">    }</span>
+
+    @Override
+    public int getMaxEvaluations() {
+<span class="nc" id="L51">        return this.maxEvaluations;</span>
+    }
+
+    @Override
+    public int getIterations() {
+<span class="nc" id="L56">        return this.iterations;</span>
+    }
+
+    @Override
+    public OpManager getSelector() {
+<span class="nc" id="L61">        return selector;</span>
+    }
+
+    @Override
+    public void setSelector(OpManager selector) {
+<span class="nc" id="L66">        this.selector = selector;</span>
+<span class="nc" id="L67">    }</span>
+
+    @Override
+    public int getMaxIterations() {
+<span class="nc" id="L71">        return maxIterations;</span>
+    }
+
+    public void setMaxIterations(int maxIterations) {
+<span class="nc" id="L75">        this.maxIterations = maxIterations;</span>
+<span class="nc" id="L76">    }</span>
+
+    @Override
+    public int getPopulationSize() {
+<span class="nc" id="L80">        return super.getMaxPopulationSize();</span>
+    }
+
+    @Override
+    public void setPopulationSize(int populationSize) {
+<span class="nc" id="L85">        super.setMaxPopulationSize(populationSize);</span>
+<span class="nc" id="L86">    }</span>
+
+    public int getEvaluations() {
+<span class="nc" id="L89">        return evaluations;</span>
+    }
+
+    public void setEvaluations(int evaluations) {
+<span class="nc" id="L93">        this.evaluations = evaluations;</span>
+<span class="nc" id="L94">    }</span>
+
+    @Override
+    public void setIterations(int iterations) {
+<span class="nc" id="L98">        this.iterations = iterations;</span>
+<span class="nc" id="L99">    }</span>
+
+    @Override
+    protected boolean isStoppingConditionReached() {
+<span class="nc bnc" id="L103" title="All 4 branches missed.">        return evaluations &gt;= maxEvaluations &amp;&amp; iterations &gt;= maxIterations;</span>
+    }
+
+    @Override
+    public void setCrossoverOperator(CrossoverOperator&lt;S&gt; co) {
+<span class="nc" id="L108">        this.crossoverOperator = (DifferentialEvolutionCrossover) co;</span>
+<span class="nc" id="L109">    }</span>
+
+    @Override
+    public void setMutationOperator(MutationOperator&lt;S&gt; mo) {
+        //nothing to do here
+<span class="nc" id="L114">    }</span>
+
+    @Override
+    public void initMetaheuristic() {
+<span class="nc" id="L118">        population = createInitialPopulation();</span>
+<span class="nc" id="L119">        population = evaluatePopulation(population);</span>
+<span class="nc" id="L120">        initProgress();</span>
+<span class="nc" id="L121">    }</span>
+
+    @Override
+    public void run() {
+<span class="nc" id="L125">        this.initMetaheuristic();</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        while (!isStoppingConditionReached()) {</span>
+<span class="nc" id="L127">            this.generateNewPopulation();</span>
+<span class="nc" id="L128">            population = replacement(population, offspringPopulation);</span>
+        }
+<span class="nc" id="L130">    }</span>
+
+    @Override
+    public void generateNewPopulation() {
+        /*This is necessary because of GDE3 impossibility for generating solutions with less than 4 parent solutions. Just used in HHs*/
+<span class="nc" id="L135">        Random rnd = new SecureRandom();</span>
+<span class="nc bnc" id="L136" title="All 4 branches missed.">        while (population.size() &lt; getMaxPopulationSize() || population.size() &lt; 4) {</span>
+<span class="nc" id="L137">            population.add(population.get(rnd.nextInt(population.size())));</span>
+        }
+<span class="nc" id="L139">        this.executeMethod();</span>
+<span class="nc" id="L140">        population = replacement(population, offspringPopulation);</span>
+<span class="nc" id="L141">        updateProgress();</span>
+<span class="nc" id="L142">        iterations++;</span>
+<span class="nc" id="L143">    }</span>
+
+    @Override
+    public List&lt;DoubleSolution&gt; executeMethod() {
+<span class="nc" id="L147">        List&lt;DoubleSolution&gt; matingPopulation = selection(population);</span>
+<span class="nc" id="L148">        offspringPopulation = reproduction(matingPopulation);</span>
+<span class="nc" id="L149">        offspringPopulation = evaluatePopulation(offspringPopulation);</span>
+<span class="nc" id="L150">        return offspringPopulation;</span>
+    }
+
+    @Override
+    public List getRealpop() {
+<span class="nc" id="L155">        List&lt;DoubleSolution&gt; toReturn = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L156">        toReturn.addAll(population);</span>
+<span class="nc" id="L157">        toReturn.addAll(offspringPopulation);</span>
+<span class="nc" id="L158">        System.out.println(offspringPopulation.size() + &quot; &quot; + population.size() + &quot; &quot; + toReturn.size());</span>
+<span class="nc" id="L159">        return toReturn;</span>
+    }
+
+    @Override
+    public List getPopulation() {
+<span class="nc" id="L164">        return population;</span>
+    }
+
+    @Override
+    public void setPopulation(List population) {
+<span class="nc" id="L169">        this.population = population;</span>
+<span class="nc" id="L170">    }</span>
+
+    @Override
+    public List updateMainPopulation(List list) {
+<span class="nc" id="L174">        population = replacement(population, list);</span>
+<span class="nc" id="L175">        return population;</span>
+    }
+
+    public List&lt;DoubleSolution&gt; getOffspringPopulation() {
+<span class="nc" id="L179">        return offspringPopulation;</span>
+    }
+
+    public void setOffspringPopulation(List&lt;DoubleSolution&gt; offspringPopulation) {
+<span class="nc" id="L183">        this.offspringPopulation = offspringPopulation;</span>
+<span class="nc" id="L184">    }</span>
+
+    @Override
+    protected List&lt;DoubleSolution&gt; reproduction(List&lt;DoubleSolution&gt; matingPopulation) {
+<span class="nc" id="L188">        selector.selectOp();</span>
+<span class="nc" id="L189">        crossoverOperator = (DifferentialEvolutionCrossover) selector.getCrossoverOperator();</span>
+<span class="nc" id="L190">        offspringPopulation = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L191" title="All 4 branches missed.">        for (int i = 0; i &lt; realSize &amp;&amp; i &lt; getPopulation().size(); i++) {</span>
+<span class="nc" id="L192">            crossoverOperator.setCurrentSolution((DoubleSolution) getPopulation().get(i));</span>
+<span class="nc" id="L193">            List&lt;DoubleSolution&gt; parents = new ArrayList&lt;&gt;(3);</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">            for (int j = 0; j &lt; 3; j++) {</span>
+<span class="nc" id="L195">                parents.add(matingPopulation.get(0));</span>
+<span class="nc" id="L196">                matingPopulation.remove(0);</span>
+            }
+
+<span class="nc" id="L199">            crossoverOperator.setCurrentSolution((DoubleSolution) getPopulation().get(i));</span>
+<span class="nc" id="L200">            List&lt;DoubleSolution&gt; children = crossoverOperator.execute(parents);</span>
+<span class="nc" id="L201">            TaggedSolution s2 = new DoubleTaggedSolution((DefaultDoubleSolution) children.get(0));</span>
+<span class="nc" id="L202">            selector.assignTag(parents, s2, this);</span>
+<span class="nc" id="L203">            offspringPopulation.add((DoubleSolution) s2);</span>
+
+<span class="nc" id="L205">            selector.selectOp();</span>
+<span class="nc" id="L206">            crossoverOperator = (DifferentialEvolutionCrossover) selector.getCrossoverOperator();</span>
+        }
+
+<span class="nc" id="L209">        return offspringPopulation;</span>
+    }
+
+    public int getRealSize() {
+<span class="nc" id="L213">        return realSize;</span>
+    }
+
+    public void setRealSize(int realSize) {
+<span class="nc" id="L217">        this.realSize = realSize;</span>
+<span class="nc" id="L218">    }</span>
+
+    @Override
+    protected List&lt;DoubleSolution&gt; replacement(List&lt;DoubleSolution&gt; population,
+            List&lt;DoubleSolution&gt; offspringPopulation) {
+<span class="nc" id="L223">        List&lt;DoubleSolution&gt; tmpList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L224">        int minSize=Math.min(population.size(), offspringPopulation.size());</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">        while(tmpList.size() &lt; getMaxPopulationSize()){</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">            for (int i = 0; i &lt; minSize; i++) {</span>
+                // Dominance test
+<span class="nc" id="L228">                DoubleSolution child = offspringPopulation.get(i);</span>
+                int result;
+<span class="nc" id="L230">                result = dominanceComparator.compare(population.get(i), child);</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">                if (result == -1) {</span>
+                    // Solution i dominates child
+<span class="nc" id="L233">                    tmpList.add(population.get(i));</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">                } else if (result == 1) {</span>
+                    // child dominates
+<span class="nc" id="L236">                    tmpList.add(child);</span>
+                } else {
+                    // the two solutions are non-dominated
+<span class="nc" id="L239">                    tmpList.add(child);</span>
+<span class="nc" id="L240">                    tmpList.add(population.get(i));</span>
+                }
+            }
+        }
+<span class="nc" id="L244">        Ranking&lt;DoubleSolution&gt; ranking = computeRanking(tmpList);</span>
+
+<span class="nc" id="L246">        return crowdingDistanceSelection(ranking);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

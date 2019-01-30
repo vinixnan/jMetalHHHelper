@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultParameters.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.core</a> &gt; <span class="el_source">DefaultParameters.java</span></div><h1>DefaultParameters.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.core;
+
+import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.FileBasedConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Configurations;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+
+/**
+ * The type Default parameters.
+ * This class reads configurations from file.
+ */
+<span class="fc" id="L19">public abstract class DefaultParameters {</span>
+
+  /**
+   * Gets file.
+   *
+   * @param configFileName the config file name
+   * @return the file
+   */
+  protected Configuration getFile(String configFileName) {
+<span class="fc" id="L28">    String path = &quot;configurations&quot; + File.separator + configFileName;</span>
+<span class="fc" id="L29">    Parameters params = new Parameters();</span>
+<span class="fc" id="L30">    FileBasedConfigurationBuilder&lt;FileBasedConfiguration&gt; builder =</span>
+    new FileBasedConfigurationBuilder&lt;FileBasedConfiguration&gt;(PropertiesConfiguration.class)
+<span class="fc" id="L32">    .configure(params.properties()</span>
+<span class="fc" id="L33">        .setFileName(path));</span>
+    try {
+<span class="fc" id="L35">      Configuration config = builder.getConfiguration();</span>
+<span class="fc" id="L36">      return config;</span>
+<span class="fc" id="L37">    } catch (ConfigurationException ex) {</span>
+<span class="fc" id="L38">      Logger.getLogger(DefaultParameters.class.getName()).log(Level.SEVERE, null, ex);</span>
+    }
+<span class="fc" id="L40">    return null;</span>
+  }
+
+  /**
+   * Read configs from file.
+   *
+   * @param configFileName the config file name
+   */
+  public abstract void readConfigsFromFile(String configFileName);
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

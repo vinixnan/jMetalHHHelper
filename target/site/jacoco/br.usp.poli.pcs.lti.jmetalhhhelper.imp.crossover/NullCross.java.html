@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NullCross.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.imp.crossover</a> &gt; <span class="el_source">NullCross.java</span></div><h1>NullCross.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.imp.crossover;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.uma.jmetal.operator.impl.crossover.NullCrossover;
+import org.uma.jmetal.solution.Solution;
+
+/**
+ * This class extends the jMetal crossover class and implements Operator interface. This was
+ * created to use polymorphism without changes jMetal crossover class.
+ */
+
+/**
+ * @param &lt;S&gt; jMetal needs.
+ */
+@SuppressWarnings({&quot;unchecked&quot;, &quot;serial&quot;})
+public class NullCross&lt;S extends Solution&lt;?&gt;&gt; extends NullCrossover&lt;S&gt; implements
+    br.usp.poli.pcs.lti.jmetalhhhelper.core.interfaces.Operator {
+
+  /**
+   * HashMap which contains all operator parameters.
+   */
+  protected Map&lt;String, Object&gt; parameters;
+
+  /**
+   * Default constructor.
+   */
+<span class="fc" id="L29">  public NullCross() {</span>
+<span class="fc" id="L30">    this.parameters = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L31">  }</span>
+
+  @Override
+  public void setParameter(String attributeName, Object value) {
+<span class="fc" id="L35">    this.parameters.put(attributeName, value);</span>
+<span class="fc" id="L36">  }</span>
+
+  @Override
+  public Object getParameter(String attributeName) {
+<span class="fc" id="L40">    return this.parameters.getOrDefault(attributeName, null);</span>
+  }
+
+  @Override
+  public Map&lt;String, Object&gt; getParameters() {
+<span class="fc" id="L45">    return parameters;</span>
+  }
+
+  @Override
+  public void setParameters(Map&lt;String, Object&gt; parameters) {
+<span class="fc" id="L50">    this.parameters = parameters;</span>
+<span class="fc" id="L51">  }</span>
+
+  @Override
+  public void allocateParameters() {
+
+<span class="fc" id="L56">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

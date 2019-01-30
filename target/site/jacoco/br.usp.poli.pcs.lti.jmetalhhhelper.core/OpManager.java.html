@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OpManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.core</a> &gt; <span class="el_source">OpManager.java</span></div><h1>OpManager.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.core;
+
+import java.io.Serializable;
+import java.util.List;
+
+import org.uma.jmetal.algorithm.Algorithm;
+import org.uma.jmetal.operator.CrossoverOperator;
+import org.uma.jmetal.operator.MutationOperator;
+import org.uma.jmetal.solution.Solution;
+
+/**
+ * This class manages a LLH for meta-heuristics. It uses OpSelector to select a
+ * LLH and sets to crossoverOperator and mutationOperator.
+ */
+
+/**
+ * @param &lt;S&gt; jMetal needs.
+ */
+public class OpManager&lt;S extends Solution&lt;?&gt;&gt; implements Serializable {
+
+  /**
+   * an OpSelector used to automatically selects LLHs.
+   */
+  protected OpSelector selector;
+
+  /**
+   * the current selected LowLevelHeuristic.
+   */
+  protected LowLevelHeuristic llh;
+
+  /**
+   * the current crossover operator, obtained from LowLevelHeuristic.
+   */
+  protected CrossoverOperator&lt;S&gt; crossoverOperator;
+
+  /**
+   * the current mutation operator, obtained from LowLevelHeuristic.
+   */
+  protected MutationOperator&lt;S&gt; mutationOperator;
+
+  /**
+   * Default constructor.
+   */
+<span class="fc" id="L44">  public OpManager() {</span>
+<span class="fc" id="L45">    selector = null;</span>
+<span class="fc" id="L46">  }</span>
+
+  /**
+   * Parameterized Constructor.
+   *
+   * @param selector automatic selector.
+   */
+<span class="fc" id="L53">  public OpManager(OpSelector selector) {</span>
+<span class="fc" id="L54">    this.selector = selector;</span>
+<span class="fc" id="L55">  }</span>
+
+  /**
+   * Get automatic selector.
+   *
+   * @return OpSelector selector.
+   */
+  public OpSelector getSelector() {
+<span class="fc" id="L63">    return selector;</span>
+  }
+
+  /**
+   * Set automatic selector.
+   *
+   * @param selector (automatic).
+   */
+  public void setSelector(OpSelector selector) {
+<span class="fc" id="L72">    this.selector = selector;</span>
+<span class="fc" id="L73">  }</span>
+
+  /**
+   * Selects a LowLevelHeuristic using the instantiated selector.
+   *
+   * @return the selected LowLevelHeuristic.
+   */
+  public LowLevelHeuristic selectOp() {
+<span class="fc bfc" id="L81" title="All 2 branches covered.">    if (this.selector != null) {</span>
+<span class="fc" id="L82">      llh = this.selector.select();</span>
+<span class="fc" id="L83">      crossoverOperator = (CrossoverOperator&lt;S&gt;) llh.getCrossover().getOp();</span>
+<span class="fc" id="L84">      mutationOperator = (MutationOperator&lt;S&gt;) llh.getMutation().getOp();</span>
+<span class="fc" id="L85">      return llh;</span>
+    }
+<span class="fc" id="L87">    this.llh = null;</span>
+<span class="fc" id="L88">    return null;</span>
+  }
+
+  /**
+   * Discover Algorithm and LowLevelHeuristic to a solution if the selector is instantiated.
+   *
+   * @param parents of solution.
+   * @param targetsolution target solution.
+   * @param appliedAlgorithm Algorithm applied.
+   */
+  public void assignTag(List&lt;S&gt; parents, TaggedSolution targetsolution,
+      Algorithm appliedAlgorithm) {
+<span class="fc bfc" id="L100" title="All 2 branches covered.">    if (this.selector != null) {</span>
+<span class="fc" id="L101">      targetsolution.setAction(this.selector.buildTagCrossover(parents, targetsolution, llh));</span>
+    }
+<span class="fc" id="L103">    targetsolution.setAlgorithm(this.buildTagAlg(parents, targetsolution, appliedAlgorithm));</span>
+<span class="fc" id="L104">  }</span>
+
+  /**
+   * Assign Algorithm and LowLevelHeuristic to a solution considering parents, it makes
+   * offspring equals to parents assign the same LowLevelHeuristic of parents.
+   *
+   * @param parents of solution
+   * @param targetsolution target solution
+   * @param appliedAlgorithm Algorithm applied
+   * @return Algorithm
+   */
+    protected Algorithm buildTagAlg(List&lt;S&gt; parents, TaggedSolution targetsolution,
+            Algorithm appliedAlgorithm) {
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        for (Solution&lt;?&gt; parent : parents) {</span>
+            //deve garantir que todos pais sejam testados
+<span class="fc bfc" id="L119" title="All 2 branches covered.">            if (parent instanceof TaggedSolution) {</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">                if (((TaggedSolution) parent).strVariables().equals(targetsolution.strVariables())) {</span>
+<span class="fc" id="L121">                    return ((TaggedSolution) parent).getAlgorithm();</span>
+                }
+            } else {
+<span class="fc" id="L124">                int qtd = 0;</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">                for (int i = 0; i &lt; targetsolution.getNumberOfVariables(); i++) {</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">                    if (parent.getVariableValue(i) == targetsolution.getTheVariableValue(i)) {</span>
+<span class="fc" id="L127">                        qtd++;</span>
+                    }
+                }
+<span class="fc bfc" id="L130" title="All 2 branches covered.">                if (qtd == targetsolution.getNumberOfVariables()) {</span>
+<span class="fc" id="L131">                    return null;</span>
+                }
+            }
+<span class="fc" id="L134">        }</span>
+<span class="fc" id="L135">        return appliedAlgorithm;</span>
+    }
+
+  /**
+   * Gets Crossover operator.
+   *
+   * @return CrossoverOperator
+   */
+  public CrossoverOperator&lt;S&gt; getCrossoverOperator() {
+<span class="fc" id="L144">    return crossoverOperator;</span>
+  }
+
+  /**
+   * Set Crossover operator.
+   *
+   * @param crossoverOperator crossover.
+   */
+  public void setCrossoverOperator(CrossoverOperator&lt;S&gt; crossoverOperator) {
+<span class="fc" id="L153">    this.crossoverOperator = crossoverOperator;</span>
+<span class="fc" id="L154">  }</span>
+
+  /**
+   * Get Mutation operator.
+   *
+   * @return MutationOperator mutation.
+   */
+  public MutationOperator&lt;S&gt; getMutationOperator() {
+<span class="fc" id="L162">    return mutationOperator;</span>
+  }
+
+  /**
+   * Set Mutation operator.
+   *
+   * @param mutationOperator mutation.
+   */
+  public void setMutationOperator(MutationOperator&lt;S&gt; mutationOperator) {
+<span class="fc" id="L171">    this.mutationOperator = mutationOperator;</span>
+<span class="fc" id="L172">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

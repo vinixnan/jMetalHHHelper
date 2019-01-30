@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UniformMuta.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation</a> &gt; <span class="el_source">UniformMuta.java</span></div><h1>UniformMuta.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation;
+
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.interfaces.Operator;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.uma.jmetal.operator.impl.mutation.UniformMutation;
+
+/**
+ * The type Uniform muta.
+ * This class extends the jMetal mutation class and implements Operator
+ * interface. This was         created to use polymorphism without changes jMetal mutation
+ * class.
+ */
+@SuppressWarnings(&quot;serial&quot;)
+public class UniformMuta extends UniformMutation implements Operator {
+
+  /**
+   * Map which contains all operator parameters.
+   */
+  protected Map&lt;String, Object&gt; parameters;
+
+  /**
+   * Instantiates a new Uniform muta.
+   *
+   * @param mutationProbability the mutation probability
+   * @param perturbation the perturbation
+   */
+  public UniformMuta(double mutationProbability, double perturbation) {
+<span class="fc" id="L31">    super(mutationProbability, perturbation);</span>
+<span class="fc" id="L32">    parameters = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L33">  }</span>
+
+  /**
+   * Default constructor.
+   */
+  public UniformMuta() {
+<span class="fc" id="L39">    super(0, 0);</span>
+<span class="fc" id="L40">    parameters = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L41">  }</span>
+
+  @Override
+  public void allocateParameters() {
+<span class="fc" id="L45">    this.setPerturbation((double) this.parameters.get(&quot;perturbation&quot;));</span>
+<span class="fc" id="L46">    this.setMutationProbability((double) this.parameters.get(&quot;probability&quot;));</span>
+<span class="fc" id="L47">  }</span>
+
+  @Override
+  public void setParameter(String attributeName, Object value) {
+<span class="fc" id="L51">    this.parameters.put(attributeName, value);</span>
+<span class="fc" id="L52">  }</span>
+
+  @Override
+  public Object getParameter(String attributeName) {
+<span class="fc" id="L56">    return this.parameters.getOrDefault(attributeName, null);</span>
+  }
+
+  @Override
+  public Map&lt;String, Object&gt; getParameters() {
+<span class="nc" id="L61">    return parameters;</span>
+  }
+
+  @Override
+  public void setParameters(Map&lt;String, Object&gt; parameters) {
+<span class="fc" id="L66">    this.parameters = parameters;</span>
+<span class="fc" id="L67">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

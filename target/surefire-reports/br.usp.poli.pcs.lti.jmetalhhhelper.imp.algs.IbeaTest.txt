@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: br.usp.poli.pcs.lti.jmetalhhhelper.imp.algs.IbeaTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 12.842 sec - in br.usp.poli.pcs.lti.jmetalhhhelper.imp.algs.IbeaTest

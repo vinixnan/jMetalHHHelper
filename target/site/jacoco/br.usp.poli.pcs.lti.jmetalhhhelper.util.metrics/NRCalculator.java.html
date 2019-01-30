@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NRCalculator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics</a> &gt; <span class="el_source">NRCalculator.java</span></div><h1>NRCalculator.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics;
+
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
+
+import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.front.Front;
+
+/**
+ * This class extends Calculator class and perform an evaluation using the
+ * RniCalculator Indicator.
+ */
+public class NRCalculator&lt;S extends Solution&lt;?&gt;&gt; extends Calculator {
+
+    /**
+     * The population size.
+     */
+<span class="nc" id="L21">    private @Getter</span>
+<span class="nc" id="L22">    @Setter</span>
+    int populationMaxSize;
+
+    /**
+     * Instantiates a new Rni.
+     *
+     * @param numberOfObjectives the number of objectives
+     * @param populationMaxSize the population max size
+     * @param path the path
+     * @throws FileNotFoundException the file not found exception
+     */
+    public NRCalculator(int numberOfObjectives, int populationMaxSize, String path)
+            throws FileNotFoundException {
+<span class="nc" id="L35">        super(numberOfObjectives, path);</span>
+<span class="nc" id="L36">        this.populationMaxSize = populationMaxSize;</span>
+<span class="nc" id="L37">        this.indicatorName = &quot;NR&quot;;</span>
+<span class="nc" id="L38">        lowerValuesAreBetter = false;</span>
+<span class="nc" id="L39">    }</span>
+
+    /**
+     * Instantiates a new Rni calculator.
+     *
+     * @param numberOfObjectives the number of objectives
+     * @param populationMaxSize the population max size
+     * @param referenceFront the reference front
+     */
+    public NRCalculator(int numberOfObjectives, int populationMaxSize, Front referenceFront) {
+<span class="nc" id="L49">        super(numberOfObjectives, referenceFront);</span>
+<span class="nc" id="L50">        this.populationMaxSize = populationMaxSize;</span>
+<span class="nc" id="L51">        this.indicatorName = &quot;NR&quot;;</span>
+<span class="nc" id="L52">        lowerValuesAreBetter = false;</span>
+<span class="nc" id="L53">    }</span>
+
+    private String strVariables(S s) {
+<span class="nc" id="L56">        String str = &quot;&quot;;</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        for (int i = 0; i &lt; s.getNumberOfVariables(); i++) {</span>
+<span class="nc" id="L58">            str += String.valueOf(s.getVariableValue(i)) + &quot;.&quot;;</span>
+        }
+<span class="nc" id="L60">        return str;</span>
+    }
+
+    private List&lt;String&gt; getPopAsString(List&lt;S&gt; front) {
+<span class="nc" id="L64">        List&lt;String&gt; toReturn = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        for (S s : front) {</span>
+<span class="nc" id="L66">            toReturn.add(strVariables(s));</span>
+<span class="nc" id="L67">        }</span>
+<span class="nc" id="L68">        return toReturn;</span>
+    }
+
+    private List&lt;S&gt; getIntersection(List&lt;S&gt; frontA, List&lt;S&gt; frontB) {
+<span class="nc" id="L72">        List&lt;S&gt; toReturn = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L73">        List&lt;String&gt; frontAString = getPopAsString(frontA);</span>
+<span class="nc" id="L74">        List&lt;String&gt; frontBString = getPopAsString(frontB);</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        for (int i = 0; i &lt; frontA.size(); i++) {</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">            if (frontBString.contains(frontAString.get(i))) {</span>
+<span class="nc" id="L77">                toReturn.add(frontA.get(i));</span>
+            }
+        }
+<span class="nc" id="L80">        return toReturn;</span>
+    }
+
+    public double calculate(List&lt;S&gt; frontA, List&lt;S&gt; frontB) {
+<span class="nc" id="L84">        List&lt;S&gt; intersection = getIntersection(frontA, frontB);</span>
+<span class="nc" id="L85">        return ((double) intersection.size()) / ((double) frontB.size());</span>
+    }
+
+    @Override
+    public double calculate(Front front, double[] maximumValues, double[] minimumValues) {
+<span class="nc" id="L90">        return Double.NEGATIVE_INFINITY;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

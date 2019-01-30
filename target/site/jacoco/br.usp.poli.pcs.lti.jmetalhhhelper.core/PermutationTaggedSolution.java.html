@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PermutationTaggedSolution.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.core</a> &gt; <span class="el_source">PermutationTaggedSolution.java</span></div><h1>PermutationTaggedSolution.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.core;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.uma.jmetal.algorithm.Algorithm;
+import org.uma.jmetal.problem.PermutationProblem;
+import org.uma.jmetal.solution.impl.DefaultIntegerPermutationSolution;
+
+/**
+ * This class extends the jMetal class DefaultIntegerPermutationSolution and implements
+ * TaggedSolution. So, It contains methods used to associate a DefaultIntegerPermutationSolution
+ * with an algorithm and LLH.
+ */
+
+/**
+ * @param &lt;T&gt; necessary because of jMetal.
+ */
+public class PermutationTaggedSolution&lt;T extends Object&gt; extends
+    DefaultIntegerPermutationSolution implements TaggedSolution {
+
+  /**
+   * The associated algorithm.
+   */
+  private Algorithm algorithm;
+
+  /**
+   * The associated Low-Level Heuristic.
+   */
+  private LowLevelHeuristic action;
+  
+<span class="nc" id="L31">  private @Getter @Setter int subProblemId;//-1 to NOTHING</span>
+  
+<span class="nc" id="L33">  private @Getter @Setter boolean newSolution;</span>
+
+  /**
+   * @param problem a Permutation Problem.
+   */
+  public PermutationTaggedSolution(PermutationProblem&lt;?&gt; problem) {
+<span class="fc" id="L39">    super(problem);</span>
+<span class="fc" id="L40">    algorithm = null;</span>
+<span class="fc" id="L41">    action = null;</span>
+<span class="fc" id="L42">    this.subProblemId=-1;</span>
+<span class="fc" id="L43">    this.newSolution=false;</span>
+<span class="fc" id="L44">  }</span>
+
+  /**
+   * @param solution a DefaultIntegerPermutationSolution solution.
+   */
+  public PermutationTaggedSolution(DefaultIntegerPermutationSolution solution) {
+<span class="fc" id="L50">    super(solution);</span>
+<span class="fc" id="L51">    algorithm = null;</span>
+<span class="fc" id="L52">    action = null;</span>
+<span class="fc" id="L53">    this.subProblemId=-1;</span>
+<span class="fc" id="L54">    this.newSolution=false;</span>
+<span class="fc" id="L55">  }</span>
+
+
+  @Override
+  public LowLevelHeuristic getAction() {
+<span class="fc" id="L60">    return action;</span>
+  }
+
+
+  @Override
+  public void setAction(LowLevelHeuristic action) {
+<span class="fc" id="L66">    this.action = action;</span>
+<span class="fc" id="L67">  }</span>
+
+
+  @Override
+  public Algorithm getAlgorithm() {
+<span class="fc" id="L72">    return algorithm;</span>
+  }
+
+
+  @Override
+  public void setAlgorithm(Algorithm algorithm) {
+<span class="fc" id="L78">    this.algorithm = algorithm;</span>
+<span class="fc" id="L79">  }</span>
+
+
+  @Override
+  public Object getTheVariableValue(int i) {
+<span class="fc" id="L84">    return super.getVariableValue(i);</span>
+  }
+  
+  @Override
+  public PermutationTaggedSolution copy() {
+<span class="nc" id="L89">    return new PermutationTaggedSolution(this);</span>
+  }
+  
+  @Override
+    public String strVariables() {
+<span class="nc" id="L94">        String str=&quot;&quot;;</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        for (int i = 0; i &lt; this.getNumberOfVariables(); i++) {</span>
+<span class="nc" id="L96">            str+=String.valueOf(getVariableValue(i))+&quot;.&quot;;</span>
+        }
+<span class="nc" id="L98">        return str;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

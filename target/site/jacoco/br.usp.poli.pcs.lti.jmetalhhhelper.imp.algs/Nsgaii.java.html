@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Nsgaii.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.imp.algs</a> &gt; <span class="el_source">Nsgaii.java</span></div><h1>Nsgaii.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.imp.algs;
+
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.DoubleTaggedSolution;
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.OpManager;
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.PermutationTaggedSolution;
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.TaggedSolution;
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.interfaces.StandardMetaheuristic;
+
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
+
+import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAII;
+import org.uma.jmetal.operator.CrossoverOperator;
+import org.uma.jmetal.operator.MutationOperator;
+import org.uma.jmetal.operator.SelectionOperator;
+import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.solution.impl.DefaultDoubleSolution;
+import org.uma.jmetal.solution.impl.DefaultIntegerPermutationSolution;
+import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
+
+/**
+ * This class extends the algorithm from jMetal and implements operations
+ * necessary for algorithm transitions.
+ */
+
+/**
+ * The type Nsgaii.
+ *
+ * @param &lt;S&gt; jMetal need.
+ */
+@SuppressWarnings(&quot;serial&quot;)
+public class Nsgaii&lt;S extends Solution&lt;?&gt;&gt; extends NSGAII&lt;S&gt; implements
+    StandardMetaheuristic&lt;S&gt; {
+
+  /**
+   * Low-Level Heuristic Selector.
+   */
+  protected OpManager selector;
+  /**
+   * Current iteration.
+   */
+  protected int iterations;
+  /**
+   * Max Number of iterations.
+   */
+  protected int maxIterations;
+  
+<span class="nc" id="L54">  protected @Getter @Setter List&lt;S&gt; offspringPopulation;</span>
+
+  /**
+   * Instantiates a new Nsgaii.
+   *
+   * @param problem the problem
+   * @param maxEvaluations the max evaluations
+   * @param populationSize the population size
+   * @param crossoverOperator the crossover operator
+   * @param mutationOperator the mutation operator
+   * @param selectionOperator the selection operator
+     * @param dominanceComparator
+   * @param evaluator the evaluator
+   */
+  public Nsgaii(Problem&lt;S&gt; problem, int maxEvaluations, int populationSize,
+      CrossoverOperator&lt;S&gt; crossoverOperator, MutationOperator&lt;S&gt; mutationOperator,
+      SelectionOperator&lt;List&lt;S&gt;, S&gt; selectionOperator, Comparator&lt;S&gt; dominanceComparator, SolutionListEvaluator&lt;S&gt; evaluator) {
+<span class="fc" id="L71">    super(problem, maxEvaluations, populationSize, crossoverOperator, mutationOperator, selectionOperator, dominanceComparator, evaluator);</span>
+<span class="fc" id="L72">    selector = new OpManager();</span>
+<span class="fc" id="L73">    selector.setCrossoverOperator(crossoverOperator);</span>
+<span class="fc" id="L74">    selector.setMutationOperator(mutationOperator);</span>
+<span class="fc" id="L75">    maxIterations = maxEvaluations / populationSize;</span>
+<span class="fc" id="L76">  }</span>
+
+  @Override
+  protected List&lt;S&gt; reproduction(List&lt;S&gt; population) {
+
+<span class="fc" id="L81">    selector.selectOp();</span>
+<span class="fc" id="L82">    crossoverOperator = selector.getCrossoverOperator();</span>
+<span class="fc" id="L83">    mutationOperator = selector.getMutationOperator();</span>
+<span class="fc" id="L84">    int numberOfParents = crossoverOperator.getNumberOfRequiredParents();</span>
+
+    //checkNumberOfParents(population, numberOfParents);//generates just one, no need
+<span class="fc" id="L87">    offspringPopulation = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">    for (int i = 0; i &lt; getMaxPopulationSize(); i++) {</span>
+<span class="fc" id="L89">      List&lt;S&gt; parents = new ArrayList&lt;&gt;(numberOfParents);</span>
+<span class="fc" id="L90">      SecureRandom rdn = new SecureRandom();</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">      for (int j = 0; j &lt; numberOfParents; j++) {</span>
+<span class="fc" id="L92">        parents.add(population.get(rdn.nextInt(getMaxPopulationSize())));</span>
+      }
+
+<span class="fc" id="L95">      List&lt;S&gt; offspring = crossoverOperator.execute(parents);</span>
+<span class="fc" id="L96">      S s = offspring.get(0);</span>
+<span class="fc" id="L97">      mutationOperator.execute(s);</span>
+      TaggedSolution s2;
+<span class="fc bfc" id="L99" title="All 2 branches covered.">      if (problem instanceof AbstractDoubleProblem) {</span>
+<span class="fc" id="L100">        s2 = new DoubleTaggedSolution((DefaultDoubleSolution) offspring.get(0));</span>
+      } else {
+<span class="fc" id="L102">        s2 = new PermutationTaggedSolution((DefaultIntegerPermutationSolution) offspring.get(0));</span>
+      }
+<span class="fc" id="L104">      selector.assignTag(parents, s2, this);</span>
+<span class="fc" id="L105">      offspringPopulation.add((S) s2);</span>
+
+<span class="fc" id="L107">      selector.selectOp();</span>
+<span class="fc" id="L108">      crossoverOperator = selector.getCrossoverOperator();</span>
+<span class="fc" id="L109">      mutationOperator = selector.getMutationOperator();</span>
+<span class="fc" id="L110">      numberOfParents = crossoverOperator.getNumberOfRequiredParents();</span>
+      //checkNumberOfParents(population, numberOfParents);//generates just one, no need
+    }
+<span class="fc" id="L113">    return offspringPopulation;</span>
+  }
+
+  @Override
+  public void run() {
+<span class="fc" id="L118">    this.initMetaheuristic();</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">    while (!isStoppingConditionReached()) {</span>
+<span class="fc" id="L120">      this.generateNewPopulation();</span>
+    }
+<span class="fc" id="L122">  }</span>
+
+  @Override
+  protected boolean isStoppingConditionReached() {
+<span class="pc bpc" id="L126" title="1 of 4 branches missed.">    return evaluations &gt;= maxEvaluations &amp;&amp; iterations &gt;= maxIterations;</span>
+  }
+
+  @Override
+  public void generateNewPopulation() {
+<span class="fc" id="L131">    this.executeMethod();</span>
+<span class="fc" id="L132">    iterations++;</span>
+<span class="fc" id="L133">  }</span>
+
+  @Override
+  public List&lt;S&gt; updateMainPopulation(List&lt;S&gt; matingPopulation) {
+<span class="nc" id="L137">    population = replacement(population, matingPopulation);</span>
+<span class="nc" id="L138">    return population;</span>
+  }
+
+  @Override
+  public List&lt;S&gt; executeMethod() {
+<span class="fc" id="L143">    List&lt;S&gt; matingPopulation = selection(population);</span>
+<span class="fc" id="L144">    offspringPopulation = reproduction(matingPopulation);</span>
+<span class="fc" id="L145">    offspringPopulation = evaluatePopulation(offspringPopulation);</span>
+<span class="fc" id="L146">    population = replacement(population, offspringPopulation);</span>
+<span class="fc" id="L147">    updateProgress();</span>
+<span class="fc" id="L148">    return population;</span>
+  }
+
+  @Override
+  public void initMetaheuristic() {
+<span class="fc" id="L153">    this.population = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L154">    setPopulation(createInitialPopulation());</span>
+<span class="fc" id="L155">    setPopulation(evaluatePopulation(getPopulation()));</span>
+<span class="fc" id="L156">    initProgress();</span>
+<span class="fc" id="L157">    iterations = 1;</span>
+<span class="fc" id="L158">  }</span>
+
+  @Override
+  public List&lt;S&gt; getRealpop() {
+<span class="nc" id="L162">    return population;</span>
+  }
+
+  @Override
+  public int getPopulationSize() {
+<span class="fc" id="L167">    return maxPopulationSize;</span>
+  }
+
+  @Override
+  public void setPopulationSize(int populationSize) {
+<span class="fc" id="L172">    maxPopulationSize = populationSize;</span>
+<span class="fc" id="L173">  }</span>
+
+  @Override
+  public int getMaxEvaluations() {
+<span class="fc" id="L177">    return maxEvaluations;</span>
+  }
+
+  @Override
+  public void setCrossoverOperator(CrossoverOperator&lt;S&gt; crossoverOperator) {
+<span class="fc" id="L182">    this.crossoverOperator = crossoverOperator;</span>
+<span class="fc" id="L183">    selector.setCrossoverOperator(crossoverOperator);</span>
+<span class="fc" id="L184">  }</span>
+
+  @Override
+  public void setMutationOperator(MutationOperator&lt;S&gt; mutationOperator) {
+<span class="fc" id="L188">    this.mutationOperator = mutationOperator;</span>
+<span class="fc" id="L189">    selector.setMutationOperator(mutationOperator);</span>
+<span class="fc" id="L190">  }</span>
+
+  @Override
+  public int getIterations() {
+<span class="fc" id="L194">    return iterations;</span>
+  }
+
+  @Override
+  public void setIterations(int iterations) {
+<span class="fc" id="L199">    this.iterations = iterations;</span>
+<span class="fc" id="L200">  }</span>
+
+  @Override
+  public int getMaxIterations() {
+<span class="fc" id="L204">    return maxIterations;</span>
+  }
+
+  @Override
+  public List&lt;S&gt; getPopulation() {
+<span class="fc" id="L209">    return population;</span>
+  }
+
+  @Override
+  public void setPopulation(List&lt;S&gt; population) {
+<span class="fc" id="L214">    this.population = population;</span>
+<span class="fc" id="L215">  }</span>
+
+  @Override
+  public OpManager getSelector() {
+<span class="fc" id="L219">    return selector;</span>
+  }
+
+  @Override
+  public void setSelector(OpManager selector) {
+<span class="fc" id="L224">    this.selector = selector;</span>
+<span class="fc" id="L225">  }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

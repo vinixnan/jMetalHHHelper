@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WeightArrayListsGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.util</a> &gt; <span class="el_source">WeightArrayListsGenerator.java</span></div><h1>WeightArrayListsGenerator.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.util;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * The type Weight vectors generator.
+ */
+public class WeightArrayListsGenerator {
+
+  private final int hparam;
+
+  private final int mparam;
+
+  private final double tparam;
+
+  private final double dparam;
+
+  /**
+   * Instantiates a new Weight vectors generator.
+   *
+   * @param m the mparam
+   * @param h the hparam
+   * @param d the dparam
+   * @param t the tparam
+   */
+<span class="fc" id="L28">  public WeightArrayListsGenerator(int m, int h, double d, double t) {</span>
+<span class="fc" id="L29">    this.mparam = m;</span>
+<span class="fc" id="L30">    this.hparam = h;</span>
+<span class="fc" id="L31">    this.tparam = t;</span>
+<span class="fc" id="L32">    this.dparam = d;</span>
+<span class="fc" id="L33">  }</span>
+
+  /**
+   * The entry point of application.
+   *
+   * @param args the input arguments
+   */
+  public static void main(String[] args) {
+<span class="fc" id="L41">    int h = 200;</span>
+<span class="fc" id="L42">    int m = 2;</span>
+<span class="fc" id="L43">    double t = 1.0;</span>
+
+<span class="fc" id="L45">    Map&lt;String, String&gt; arguments = new HashMap&lt;&gt;();</span>
+
+<span class="fc bfc" id="L47" title="All 2 branches covered.">    for (int i = 0; i &lt; args.length; i += 2) {</span>
+<span class="fc" id="L48">      arguments.put(args[i], args[i + 1]);</span>
+    }
+
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">    if (arguments.get(&quot;-hparam&quot;) != null) {</span>
+<span class="fc" id="L52">      h = Integer.parseInt(arguments.get(&quot;-hparam&quot;));</span>
+    }
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">    if (arguments.get(&quot;-mparam&quot;) != null) {</span>
+<span class="fc" id="L55">      m = Integer.parseInt(arguments.get(&quot;-mparam&quot;));</span>
+    }
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">    if (arguments.get(&quot;-tparam&quot;) != null) {</span>
+<span class="fc" id="L58">      t = Double.parseDouble(arguments.get(&quot;-tparam&quot;));</span>
+    }
+
+<span class="fc" id="L61">    double d = 1.0 / (double) h;</span>
+<span class="fc" id="L62">    (new WeightArrayListsGenerator(m, h, d, t)).generate();</span>
+<span class="fc" id="L63">  }</span>
+
+  /**
+   * Generate.
+   */
+  protected void generate() {
+<span class="fc" id="L69">    ArrayList&lt;Integer&gt; count = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">    for (int i = 0; i &lt; mparam; ++i) {</span>
+<span class="fc" id="L71">      count.add(0);</span>
+    }
+<span class="fc bfc" id="L73" title="All 2 branches covered.">    for (int j = 1; j &lt; Math.pow(hparam + 1, mparam); ++j) {</span>
+<span class="fc" id="L74">      count = update(count);</span>
+<span class="fc" id="L75">      int accumulate = 0;</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">      for (int i : count) {</span>
+<span class="fc" id="L77">        accumulate += i;</span>
+<span class="fc" id="L78">      }</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">      if (hparam == accumulate) {</span>
+<span class="fc" id="L80">        print(count);</span>
+      }
+    }
+<span class="fc" id="L83">  }</span>
+
+  /**
+   * Print.
+   *
+   * @param v the v
+   */
+  protected void print(ArrayList&lt;Integer&gt; v) {
+<span class="fc bfc" id="L91" title="All 2 branches covered.">    for (int i : v) {</span>
+<span class="fc" id="L92">      double value = (1.0 - tparam) / (double) mparam;</span>
+<span class="fc" id="L93">      value += tparam * ((double) i) * dparam;</span>
+<span class="fc" id="L94">      System.out</span>
+<span class="fc" id="L95">          .print(value</span>
+              + &quot;\t&quot;);
+<span class="fc" id="L97">    }</span>
+<span class="fc" id="L98">    System.out.println();</span>
+<span class="fc" id="L99">  }</span>
+
+  /**
+   * Update vector.
+   *
+   * @param v the v
+   * @return the vector
+   */
+  protected ArrayList&lt;Integer&gt; update(ArrayList&lt;Integer&gt; v) {
+<span class="fc bfc" id="L108" title="All 4 branches covered.">    for (int i = 0; i &lt; v.size(); i = ((v.get(i) != 0) ? v.size() : i + 1)) {</span>
+<span class="fc" id="L109">      v.set(i, v.get(i) + 1);</span>
+<span class="fc" id="L110">      v.set(i, v.get(i) % (hparam + 1));</span>
+    }
+<span class="fc" id="L112">    return v;</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

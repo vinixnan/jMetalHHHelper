@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OperatorFacade.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.util</a> &gt; <span class="el_source">OperatorFacade.java</span></div><h1>OperatorFacade.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.util;
+
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.interfaces.Operator;
+
+import java.io.Serializable;
+import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * This class contains methods to automatically generates an Operator.
+ */
+public abstract class OperatorFacade implements Serializable {
+
+  /**
+   * The Operator.
+   */
+  protected Operator op;
+  /**
+   * The type used in solutions {Real, binary, Permutation}.
+   */
+  protected String solutionType;
+  /**
+   * The Max values used in automatic operator generation.
+   */
+  protected Map&lt;String, Object&gt; maxValues;
+  /**
+   * The Prefix {cross or muta}.
+   */
+  protected String prefix;
+
+  /**
+   * Instantiates a new Operator facade.
+   *
+   * @param maxValues the max values
+   * @param solutionType the solution type
+   */
+<span class="fc" id="L38">  public OperatorFacade(Map&lt;String, Object&gt; maxValues, String solutionType) {</span>
+<span class="fc" id="L39">    this.op = null;</span>
+<span class="fc" id="L40">    this.maxValues = maxValues;</span>
+<span class="fc" id="L41">    prefix = &quot;&quot;;</span>
+<span class="fc" id="L42">    this.solutionType = solutionType;</span>
+<span class="fc" id="L43">  }</span>
+
+  /**
+   * Generate double value using exponential distribution double.
+   *
+   * @param bound the bound
+   * @return the double
+   */
+  public static double generateDoubleValue(double bound) {
+<span class="fc" id="L52">    SecureRandom rand = new SecureRandom();</span>
+<span class="fc" id="L53">    double lambda = 1;</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">    if (rand.nextBoolean()) {</span>
+<span class="fc" id="L55">      lambda = 30;</span>
+    }
+<span class="fc" id="L57">    double x = Math.log(1 - rand.nextDouble()) / -lambda;</span>
+<span class="fc" id="L58">    x = Math.min(1, x);</span>
+<span class="fc" id="L59">    return x * bound;</span>
+  }
+
+  /**
+   * Gets the operator.
+   *
+   * @return the operator
+   */
+  public Operator getOp() {
+<span class="fc" id="L68">    return op;</span>
+  }
+
+  /**
+   * Sets the operator.
+   *
+   * @param op the operator
+   */
+  public void setOp(Operator op) {
+<span class="fc" id="L77">    this.op = op;</span>
+<span class="fc" id="L78">  }</span>
+
+  /**
+   * Finds inside the operator an attribute named as attributeName and return
+   * it value.
+   *
+   * @param attributeName the attribute name
+   * @return the attribute object
+   */
+  public Object getAttributeObject(String attributeName) {
+<span class="fc" id="L88">    String rightAttributeName = attributeName.replace(prefix, &quot;&quot;);</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">    if (this.op != null) {</span>
+<span class="fc" id="L90">      return this.op.getParameter(rightAttributeName);</span>
+    }
+<span class="nc" id="L92">    return null;</span>
+  }
+
+  /**
+   * Finds inside the operator an attribute named as attributeName and update
+   * it value.
+   *
+   * @param attributeName the attribute name
+   * @param value the value
+   */
+  public void setAttributeObject(String attributeName, Object value) {
+<span class="fc" id="L103">    String rightAttributeName = attributeName.replace(prefix, &quot;&quot;);</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">    if (this.op != null) {</span>
+<span class="fc" id="L105">      this.op.setParameter(rightAttributeName, value);</span>
+<span class="fc" id="L106">      op.allocateParameters();</span>
+    }
+<span class="fc" id="L108">  }</span>
+
+  /**
+   * Verify whether there is an attribute named as attributeName inside the
+   * operator, then calls setAttributeObject(attributeName, value).
+   *
+   * @param attributeName the attribute name
+   * @param value the value
+   */
+  public void setAttributeObjectVerify(String attributeName, Object value) {
+<span class="fc" id="L118">    String rightAttributeName = attributeName.replace(prefix, &quot;&quot;);</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">    if (this.op.getParameter(rightAttributeName) != null) {</span>
+<span class="fc" id="L120">      this.setAttributeObject(rightAttributeName, value);</span>
+    }
+<span class="fc" id="L122">  }</span>
+
+  /**
+   * Return all operator attribute values as HashMap.
+   *
+   * @return the params
+   */
+  public Map&lt;String, Object&gt; getParams() {
+<span class="fc" id="L130">    Map&lt;String, Object&gt; toReturn = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">    for (Map.Entry&lt;String, Object&gt; entry : this.maxValues.entrySet()) {</span>
+<span class="fc" id="L132">      Object value = this.getAttributeObject(entry.getKey());</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">      if (value != null) {</span>
+<span class="fc" id="L134">        toReturn.put(entry.getKey(), value);</span>
+      }
+<span class="fc" id="L136">    }</span>
+<span class="fc" id="L137">    return toReturn;</span>
+  }
+
+  /**
+   * Use params from the given HashMap to update operator attribute values.
+   *
+   * @param params the params
+   */
+  public void setParams(Map&lt;String, Object&gt; params) {
+<span class="fc bfc" id="L146" title="All 2 branches covered.">    for (Map.Entry&lt;String, Object&gt; entry : params.entrySet()) {</span>
+<span class="fc" id="L147">      this.setAttributeObjectVerify(entry.getKey(), entry.getValue());</span>
+<span class="fc" id="L148">    }</span>
+<span class="fc" id="L149">  }</span>
+
+  /**
+   * Gets an specific max value.
+   *
+   * @param paramName the param name
+   * @return the max values
+   */
+  protected Object getMaxValues(String paramName) {
+<span class="fc" id="L158">    return this.maxValues.get(prefix + paramName);</span>
+  }
+
+  /**
+   * Clone my operator operator.
+   *
+   * @return the operator
+   */
+  public Operator cloneMyOperator() {
+<span class="fc" id="L167">    OperatorFacade of = (OperatorFacade) this.cloneMySelf();</span>
+<span class="fc" id="L168">    return of.getOp();</span>
+  }
+
+  /**
+   * Create a clone of this object.
+   *
+   * @return clonned.
+   */
+  public abstract OperatorFacade cloneMySelf();
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

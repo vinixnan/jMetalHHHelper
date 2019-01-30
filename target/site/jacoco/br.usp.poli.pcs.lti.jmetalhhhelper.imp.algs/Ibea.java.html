@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Ibea.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.imp.algs</a> &gt; <span class="el_source">Ibea.java</span></div><h1>Ibea.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.imp.algs;
+
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.DoubleTaggedSolution;
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.OpManager;
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.PermutationTaggedSolution;
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.TaggedSolution;
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.interfaces.ArchivedMetaheuristic;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.uma.jmetal.algorithm.multiobjective.ibea.IBEA;
+import org.uma.jmetal.operator.CrossoverOperator;
+import org.uma.jmetal.operator.MutationOperator;
+import org.uma.jmetal.operator.SelectionOperator;
+import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.impl.AbstractDoubleProblem;
+import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.solution.impl.DefaultDoubleSolution;
+import org.uma.jmetal.solution.impl.DefaultIntegerPermutationSolution;
+
+/**
+ * This class extends the algorithm from jMetal and implements operations
+ * necessary for algorithm transitions.
+ */
+
+/**
+ * The type Ibea.
+ *
+ * @param &lt;S&gt; jMetal need.
+ */
+@SuppressWarnings(&quot;serial&quot;)
+public class Ibea&lt;S extends Solution&lt;?&gt;&gt; extends IBEA&lt;S&gt; implements
+    ArchivedMetaheuristic&lt;S&gt; {
+
+  /**
+   * Low-Level Heuristic Selector.
+   */
+  protected OpManager selector;
+  /**
+   * OffSpring population.
+   */
+  protected List&lt;S&gt; offSpringSolutionSet;
+  /**
+   * Current evaluations.
+   */
+  protected int evaluations;
+  /**
+   * Current iteration.
+   */
+  protected int iterations;
+  /**
+   * Max Number of iterations.
+   */
+  protected int maxIterations;
+
+  /**
+   * Instantiates a new Ibea.
+   *
+   * @param problem the problem
+   * @param populationSize the population size
+   * @param archiveSize the archive size
+   * @param maxEvaluations the max evaluations
+   * @param selectionOperator the selection operator
+   * @param crossoverOperator the crossover operator
+   * @param mutationOperator the mutation operator
+   */
+  public Ibea(Problem&lt;S&gt; problem, int populationSize, int archiveSize, int maxEvaluations,
+      SelectionOperator&lt;List&lt;S&gt;, S&gt; selectionOperator, CrossoverOperator&lt;S&gt; crossoverOperator,
+      MutationOperator&lt;S&gt; mutationOperator) {
+<span class="fc" id="L71">    super(problem, populationSize, archiveSize, maxEvaluations, selectionOperator,</span>
+        crossoverOperator, mutationOperator);
+<span class="fc" id="L73">    selector = new OpManager();</span>
+<span class="fc" id="L74">    selector.setCrossoverOperator(crossoverOperator);</span>
+<span class="fc" id="L75">    selector.setMutationOperator(mutationOperator);</span>
+<span class="fc" id="L76">    maxIterations = maxEvaluations / populationSize;</span>
+<span class="fc" id="L77">  }</span>
+
+  /**
+   * Reproduction list.
+   *
+   * @param population the population
+   * @return the list
+   */
+  protected List&lt;S&gt; reproduction(List&lt;S&gt; population) {
+<span class="fc" id="L86">    offSpringSolutionSet = new ArrayList&lt;&gt;(getPopulationSize());</span>
+    S parent1;
+    S parent2;
+<span class="fc bfc" id="L89" title="All 2 branches covered.">    while (offSpringSolutionSet.size() &lt; getPopulationSize()) {</span>
+<span class="fc" id="L90">      selector.selectOp();</span>
+<span class="fc" id="L91">      crossoverOperator = selector.getCrossoverOperator();</span>
+<span class="fc" id="L92">      mutationOperator = selector.getMutationOperator();</span>
+<span class="fc" id="L93">      int j = 0;</span>
+      do {
+<span class="fc" id="L95">        j++;</span>
+<span class="fc" id="L96">        parent1 = selectionOperator.execute(population);</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">      } while (j &lt; Ibea.TOURNAMENTS_ROUNDS);</span>
+<span class="fc" id="L98">      int k = 0;</span>
+      do {
+<span class="fc" id="L100">        k++;</span>
+<span class="fc" id="L101">        parent2 = selectionOperator.execute(population);</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">      } while (k &lt; Ibea.TOURNAMENTS_ROUNDS);</span>
+
+<span class="fc" id="L104">      List&lt;S&gt; parents = new ArrayList&lt;&gt;(2);</span>
+<span class="fc" id="L105">      parents.add(parent1);</span>
+<span class="fc" id="L106">      parents.add(parent2);</span>
+
+      //make the crossover
+<span class="fc" id="L109">      List&lt;S&gt; offspring = crossoverOperator.execute(parents);</span>
+<span class="fc" id="L110">      S s = offspring.get(0);</span>
+<span class="fc" id="L111">      mutationOperator.execute(s);</span>
+      TaggedSolution s2;
+<span class="fc bfc" id="L113" title="All 2 branches covered.">      if (problem instanceof AbstractDoubleProblem) {</span>
+<span class="fc" id="L114">        s2 = new DoubleTaggedSolution((DefaultDoubleSolution) s);</span>
+      } else {
+<span class="fc" id="L116">        s2 = new PermutationTaggedSolution((DefaultIntegerPermutationSolution) s);</span>
+      }
+<span class="fc" id="L118">      problem.evaluate((S) s2);</span>
+<span class="fc" id="L119">      selector.assignTag(parents, s2, this);</span>
+<span class="fc" id="L120">      offSpringSolutionSet.add((S) s2);</span>
+<span class="fc" id="L121">      evaluations++;</span>
+<span class="fc" id="L122">    }</span>
+<span class="fc" id="L123">    return offSpringSolutionSet;</span>
+  }
+
+  /**
+   * Selection list.
+   *
+   * @param population the population
+   * @return the list
+   */
+  protected List&lt;S&gt; selection(List&lt;S&gt; population) {
+<span class="fc" id="L133">    List&lt;S&gt; union = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L134">    union.addAll(population);</span>
+<span class="fc" id="L135">    union.addAll(archive);</span>
+<span class="fc" id="L136">    calculateFitness(union);</span>
+<span class="fc" id="L137">    archive = union;</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">    while (archive.size() &gt; populationSize) {</span>
+<span class="fc" id="L139">      removeWorst(archive);</span>
+    }
+<span class="fc" id="L141">    return archive;</span>
+  }
+
+  @Override
+  public List&lt;S&gt; executeMethod() {
+<span class="fc" id="L146">    reproduction(archive);</span>
+<span class="fc" id="L147">    selection(offSpringSolutionSet);</span>
+<span class="fc" id="L148">    return offSpringSolutionSet;</span>
+  }
+
+  @Override
+  public void run() {
+<span class="nc" id="L153">    this.initMetaheuristic();</span>
+<span class="nc bnc" id="L154" title="All 4 branches missed.">    while (evaluations &lt; maxEvaluations &amp;&amp; iterations &lt; maxIterations) {</span>
+<span class="nc" id="L155">      this.generateNewPopulation();</span>
+    }
+<span class="nc" id="L157">  }</span>
+
+  /**
+   * Evaluate population hypervolume contribution.
+   *
+   * @param list population.
+   * @return the same population.
+   */
+  protected List&lt;S&gt; evaluatePopulation(List&lt;S&gt; list) {
+<span class="nc" id="L166">    calculateFitness(list);</span>
+<span class="nc" id="L167">    return list;</span>
+  }
+
+  @Override
+  public void generateNewPopulation() {
+<span class="fc" id="L172">    this.executeMethod();</span>
+<span class="fc" id="L173">    iterations++;</span>
+<span class="fc" id="L174">  }</span>
+
+  @Override
+    public List&lt;S&gt; updateMainPopulation(List&lt;S&gt; matingPopulation) {
+<span class="nc" id="L178">        archive=selection(matingPopulation);</span>
+<span class="nc" id="L179">        return archive;</span>
+    }
+
+  @Override
+  public int getMaxEvaluations() {
+<span class="fc" id="L184">    return this.maxEvaluations;</span>
+  }
+
+  @Override
+  public int getIterations() {
+<span class="fc" id="L189">    return this.iterations;</span>
+  }
+
+  @Override
+  public void setIterations(int iterations) {
+<span class="fc" id="L194">    this.iterations = iterations;</span>
+<span class="fc" id="L195">  }</span>
+
+  @Override
+  public void setCrossoverOperator(CrossoverOperator crossoverOperator) {
+<span class="fc" id="L199">    this.crossoverOperator = crossoverOperator;</span>
+<span class="fc" id="L200">    this.selector.setCrossoverOperator(crossoverOperator);</span>
+<span class="fc" id="L201">  }</span>
+
+  @Override
+  public void setMutationOperator(MutationOperator mutationOperator) {
+<span class="fc" id="L205">    this.mutationOperator = mutationOperator;</span>
+<span class="fc" id="L206">    this.selector.setMutationOperator(mutationOperator);</span>
+<span class="fc" id="L207">  }</span>
+
+  @Override
+  public void initMetaheuristic() {
+    //Initialize the variables
+<span class="fc" id="L212">    offSpringSolutionSet = new ArrayList&lt;&gt;(getPopulationSize());</span>
+<span class="fc" id="L213">    archive = new ArrayList&lt;&gt;(archiveSize);</span>
+<span class="fc" id="L214">    evaluations = 0;</span>
+<span class="fc" id="L215">    iterations = 0;</span>
+    //-&gt; Create the initial solutionSet
+    S newSolution;
+<span class="fc bfc" id="L218" title="All 2 branches covered.">    for (int i = 0; i &lt; getPopulationSize(); i++) {</span>
+<span class="fc" id="L219">      newSolution = problem.createSolution();</span>
+<span class="fc" id="L220">      problem.evaluate(newSolution);</span>
+<span class="fc" id="L221">      evaluations++;</span>
+<span class="fc" id="L222">      offSpringSolutionSet.add(newSolution);</span>
+    }
+<span class="fc" id="L224">    selection(offSpringSolutionSet);</span>
+<span class="fc" id="L225">    iterations++;</span>
+<span class="fc" id="L226">  }</span>
+
+  @Override
+  public List&lt;S&gt; getRealpop() {
+<span class="fc" id="L230">    return getArchive();</span>
+  }
+
+  @Override
+  public int getPopulationSize() {
+<span class="fc" id="L235">    return this.populationSize;</span>
+  }
+
+  @Override
+  public void setPopulationSize(int populationSize) {
+<span class="fc" id="L240">    this.populationSize = populationSize;</span>
+<span class="fc" id="L241">  }</span>
+
+  @Override
+  public int getMaxIterations() {
+<span class="fc" id="L245">    return maxIterations;</span>
+  }
+
+  @Override
+  public List&lt;S&gt; getArchive() {
+<span class="fc" id="L250">    return this.archive;</span>
+  }
+
+  @Override
+  public void setArchive(List&lt;S&gt; pop) {
+<span class="fc" id="L255">    this.archive = pop;</span>
+<span class="fc" id="L256">  }</span>
+
+  @Override
+  public List&lt;S&gt; getPopulation() {
+<span class="nc" id="L260">    return offSpringSolutionSet;</span>
+  }
+
+  @Override
+  public void setPopulation(List&lt;S&gt; pop) {
+<span class="nc" id="L265">    this.offSpringSolutionSet = pop;</span>
+<span class="nc" id="L266">  }</span>
+
+  @Override
+  public int getArchiveSize() {
+<span class="fc" id="L270">    return archiveSize;</span>
+  }
+
+  @Override
+  public void setArchiveSize(int archiveSize) {
+<span class="fc" id="L275">    this.archiveSize = archiveSize;</span>
+<span class="fc" id="L276">  }</span>
+
+  @Override
+  public OpManager getSelector() {
+<span class="fc" id="L280">    return selector;</span>
+  }
+
+  @Override
+  public void setSelector(OpManager selector) {
+<span class="fc" id="L285">    this.selector = selector;</span>
+<span class="fc" id="L286">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

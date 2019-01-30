@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IndicatorFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.util</a> &gt; <span class="el_source">IndicatorFactory.java</span></div><h1>IndicatorFactory.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.util;
+
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics.AlgorithmEffort;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics.Calculator;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics.EpsilonCalculator;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics.GdCalculator;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics.HypervolumeCalculator;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics.HypervolumeRatioCalculator;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics.IgdCalculator;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics.IgdPlusCalculator;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics.NRCalculator;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics.RCalculator;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics.RniCalculator;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics.SpreadCalculator;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics.UDMetricHandler;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics.QuickHypervolumeCalculator;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics.SpacingCalculator;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.metrics.WFGHypervolumeCalculator;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.util.front.imp.ArrayFront;
+
+/**
+ * The type Indicator factory.
+ */
+<span class="nc" id="L29">public class IndicatorFactory {</span>
+
+  /**
+   * The constant Hypervolume.
+   */
+  public static final String Hypervolume = &quot;Hypervolume&quot;;
+  /**
+   * The constant RniCalculator.
+   */
+  public static final String RNI = &quot;RNI&quot;;
+  /**
+   * The constant IGD.
+   */
+  public static final String IGD = &quot;IGD&quot;;
+  /**
+   * The constant IGDPlus.
+   */
+  public static final String IGDPlus = &quot;IGDPlus&quot;;
+  /**
+   * The constant R.
+   */
+  public static final String R = &quot;R&quot;;
+  /**
+   * The constant GD.
+   */
+  public static final String GD = &quot;GD&quot;;
+  /**
+   * The constant Spread.
+   */
+  public static final String Spread = &quot;Spread&quot;;
+  /**
+   * The constant Epsilon.
+   */
+  public static final String Epsilon = &quot;Epsilon&quot;;
+  
+  /**
+   * The constant Uniform distribution.
+   */
+  public static final String UD = &quot;UD&quot;;
+  
+  /**
+   * The constant Algorithm Effort.
+   */
+  public static final String AlgorithmEffort = &quot;AE&quot;;
+  
+  /**
+   * The constant Hypervolume.
+   */
+  public static final String FastHypervolume = &quot;FastHypervolume&quot;;
+  
+  /**
+   * The constant Hypervolume.
+   */
+  public static final String Spacing = &quot;Spacing&quot;;
+  
+  /**
+   * The constant Hypervolume.
+   */
+  public static final String NR = &quot;NR&quot;;
+  
+  public static final String HR = &quot;HR&quot;;
+
+  /**
+   * Build calculator calculator.
+   *
+   * @param qualityIndicatorName the quality indicator name
+   * @param problem the problem
+   * @param populationSize the population size
+   * @return the calculator
+   * @throws java.io.FileNotFoundException file not found.
+   * @throws java.io.IOException file not found.
+   */
+  public static Calculator buildCalculator(String qualityIndicatorName, Problem problem,
+      int populationSize) throws FileNotFoundException, IOException {
+<span class="fc" id="L103">    String pf =</span>
+<span class="fc" id="L104">        &quot;pareto_fronts/&quot; + problem.getName() + &quot;.&quot; + problem.getNumberOfObjectives() + &quot;D.pf&quot;;</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">    if(problem.getName().equals(&quot;UF&quot;)){</span>
+<span class="nc" id="L106">        pf =</span>
+<span class="nc" id="L107">        &quot;pareto_fronts/&quot; + problem.getClass().getSimpleName() + &quot;.&quot; + problem.getNumberOfObjectives() + &quot;D.pf&quot;;</span>
+    }
+<span class="pc bpc" id="L109" title="8 of 15 branches missed.">    switch (qualityIndicatorName) {</span>
+      case IndicatorFactory.Hypervolume:
+<span class="fc" id="L111">        HypervolumeCalculator hyp=new HypervolumeCalculator(problem.getNumberOfObjectives());</span>
+<span class="pc bpc" id="L112" title="7 of 8 branches missed.">        if(problem.getName().startsWith(&quot;WFG&quot;) || problem.getName().startsWith(&quot;DTLZ&quot;) || problem.getName().startsWith(&quot;UF&quot;) || problem.getName().startsWith(&quot;ZDT&quot;)){</span>
+<span class="fc" id="L113">            hyp.setParetoTrueFront(new ArrayFront(pf));</span>
+        }
+        else{
+            //Real problems will not use that, keeping for safe
+<span class="nc" id="L117">            hyp.addParetoFront(new ArrayFront(pf));</span>
+        }
+<span class="fc" id="L119">        return hyp;</span>
+      case IndicatorFactory.FastHypervolume:
+<span class="nc" id="L121">        return new QuickHypervolumeCalculator(problem.getNumberOfObjectives());</span>
+      case IndicatorFactory.Epsilon:
+<span class="nc" id="L123">        return new EpsilonCalculator(problem.getNumberOfObjectives(), pf);</span>
+      case IndicatorFactory.RNI:
+<span class="fc" id="L125">        return new RniCalculator(problem.getNumberOfObjectives(), populationSize, pf);</span>
+      case IndicatorFactory.IGD:
+<span class="fc" id="L127">        return new IgdCalculator(problem.getNumberOfObjectives(), pf);</span>
+      case IndicatorFactory.IGDPlus:
+<span class="nc" id="L129">        return new IgdPlusCalculator(problem.getNumberOfObjectives(), pf);</span>
+      case IndicatorFactory.GD:
+<span class="fc" id="L131">        return new GdCalculator(problem.getNumberOfObjectives(), pf);</span>
+      case IndicatorFactory.R:
+<span class="fc" id="L133">        return new RCalculator(problem.getNumberOfObjectives(), populationSize, pf);</span>
+      case IndicatorFactory.Spread:
+<span class="fc" id="L135">        return new SpreadCalculator(problem.getNumberOfObjectives(), pf);</span>
+      case IndicatorFactory.AlgorithmEffort:
+<span class="nc" id="L137">        AlgorithmEffort ae=new AlgorithmEffort(populationSize);</span>
+<span class="nc" id="L138">        ae.setParetoTrueFront(new ArrayFront(pf));//necessary for compatibility</span>
+<span class="nc" id="L139">        return ae;</span>
+      case IndicatorFactory.UD:
+<span class="nc" id="L141">        return new UDMetricHandler(problem.getNumberOfObjectives(), pf);</span>
+      case IndicatorFactory.Spacing:
+<span class="nc" id="L143">        return new SpacingCalculator(problem.getNumberOfObjectives(), pf);</span>
+      case IndicatorFactory.NR:
+<span class="nc" id="L145">        return new NRCalculator(problem.getNumberOfObjectives(), populationSize, pf);</span>
+      case IndicatorFactory.HR:
+<span class="nc" id="L147">        return new HypervolumeRatioCalculator(problem.getNumberOfObjectives());</span>
+      default:
+<span class="fc" id="L149">        return null;</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CrossoverFacade.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.util</a> &gt; <span class="el_source">CrossoverFacade.java</span></div><h1>CrossoverFacade.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.util;
+
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.crossover.BlxAlphaCrossover;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.crossover.HuxCrossover;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.crossover.IntegerSbxCrossover;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.crossover.NullCross;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.crossover.OnePointCrossover;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.crossover.PmxCrossover;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.crossover.SbxCrossover;
+
+import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+/**
+ * This class contains methods to automatically generates a Crossover Operator.
+ */
+public class CrossoverFacade extends OperatorFacade {
+
+  /**
+   * Instantiates a new Crossover facade.
+   *
+   * @param maxValues the max values
+   * @param solutionType the solution type
+   */
+  public CrossoverFacade(Map&lt;String, Object&gt; maxValues, String solutionType) {
+<span class="fc" id="L28">    super(maxValues, solutionType);</span>
+<span class="fc" id="L29">    this.prefix = &quot;cross_&quot;;</span>
+<span class="fc" id="L30">  }</span>
+
+  /**
+   * Random op crossover facade.
+   *
+   * @param mta the mta
+   * @param maxValues the max values
+   * @return the crossover facade
+   */
+  public static CrossoverFacade randomOp(CrossoverFacade mta, Map&lt;String, Object&gt; maxValues) {
+<span class="fc" id="L40">    return CrossoverFacade.randomOp(mta, maxValues, Integer.MIN_VALUE);</span>
+  }
+
+  /**
+   * Random generates a crossover operator.
+   *
+   * @param mta the mta
+   * @param maxValues the max values
+   * @param typeForChoosing the type for choosing
+   * @return the crossover facade
+   */
+  public static CrossoverFacade randomOp(CrossoverFacade mta, Map&lt;String, Object&gt; maxValues,
+      int typeForChoosing) {
+<span class="fc" id="L53">    Random rd = new SecureRandom();</span>
+<span class="fc" id="L54">    HashMap&lt;String, Object&gt; params = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L55">    params.put(&quot;probability&quot;,</span>
+<span class="fc" id="L56">        OperatorFacade.generateDoubleValue((double) mta.getMaxValues(&quot;probability&quot;)));</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">    if (&quot;Real&quot;.equals(mta.solutionType)) {</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">      if (typeForChoosing == Integer.MIN_VALUE) {</span>
+<span class="fc" id="L59">        typeForChoosing = rd.nextInt(2);</span>
+      }
+<span class="fc bfc" id="L61" title="All 4 branches covered.">      switch (typeForChoosing) {</span>
+        case 0:
+<span class="fc" id="L63">          params.put(&quot;distributionIndex&quot;,</span>
+<span class="fc" id="L64">              OperatorFacade</span>
+<span class="fc" id="L65">                  .generateDoubleValue((double) mta.getMaxValues(&quot;distributionIndex&quot;)));</span>
+<span class="fc" id="L66">          mta.sbxCrossover(params); //probability distributionIndex</span>
+<span class="fc" id="L67">          break;</span>
+        case 1:
+<span class="fc" id="L69">          params</span>
+<span class="fc" id="L70">              .put(&quot;alpha&quot;,</span>
+<span class="fc" id="L71">                  OperatorFacade.generateDoubleValue((double) mta.getMaxValues(&quot;alpha&quot;)));</span>
+<span class="fc" id="L72">          mta.blxAlphaCrossover(params); //probability alpha</span>
+<span class="fc" id="L73">          break;</span>
+        case 2:
+<span class="fc" id="L75">          mta.nullCrossover(params);</span>
+<span class="fc" id="L76">          break;</span>
+        default:
+<span class="fc" id="L78">          params.put(&quot;distributionIndex&quot;,</span>
+<span class="fc" id="L79">              OperatorFacade</span>
+<span class="fc" id="L80">                  .generateDoubleValue((double) mta.getMaxValues(&quot;distributionIndex&quot;)));</span>
+<span class="fc" id="L81">          mta.sbxCrossover(params); //probability distributionIndex</span>
+<span class="fc" id="L82">          break;</span>
+      }
+<span class="fc bfc" id="L84" title="All 2 branches covered.">    } else if (&quot;Binary&quot;.equals(mta.solutionType)) {</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">      if (typeForChoosing == Integer.MIN_VALUE) {</span>
+<span class="nc" id="L86">        typeForChoosing = rd.nextInt(2);</span>
+      }
+<span class="fc bfc" id="L88" title="All 4 branches covered.">      switch (typeForChoosing) {</span>
+        case 0:
+<span class="fc" id="L90">          mta.huxCrossover(params); //probability</span>
+<span class="fc" id="L91">          break;</span>
+        case 1:
+<span class="fc" id="L93">          mta.singlePointCrossover(params); //probability</span>
+<span class="fc" id="L94">          break;</span>
+        case 2:
+<span class="fc" id="L96">          mta.nullCrossover(params);</span>
+<span class="fc" id="L97">          break;</span>
+        default:
+<span class="fc" id="L99">          mta.huxCrossover(params); //probability</span>
+<span class="fc" id="L100">          break;</span>
+
+      }
+<span class="fc bfc" id="L103" title="All 2 branches covered.">    } else if (&quot;Permutation&quot;.equals(mta.solutionType)) {</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">      if (typeForChoosing == Integer.MIN_VALUE) {</span>
+<span class="nc" id="L105">        typeForChoosing = rd.nextInt(2);</span>
+      }
+<span class="fc bfc" id="L107" title="All 3 branches covered.">      switch (typeForChoosing) {</span>
+        case 0:
+<span class="fc" id="L109">          mta.pmxCrossover(params); //probability</span>
+<span class="fc" id="L110">          break;</span>
+        case 1:
+<span class="fc" id="L112">          mta.nullCrossover(params);</span>
+<span class="fc" id="L113">          break;</span>
+        default:
+<span class="fc" id="L115">          mta.pmxCrossover(params); //probability</span>
+<span class="fc" id="L116">          break;</span>
+      }
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">    } else if (&quot;Integer&quot;.equals(mta.solutionType)) {</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">      if (typeForChoosing == Integer.MIN_VALUE) {</span>
+<span class="nc" id="L120">        typeForChoosing = rd.nextInt(2);</span>
+      }
+<span class="fc bfc" id="L122" title="All 3 branches covered.">      switch (typeForChoosing) {</span>
+
+        case 0:
+<span class="fc" id="L125">          params.put(&quot;distributionIndex&quot;,</span>
+<span class="fc" id="L126">              OperatorFacade</span>
+<span class="fc" id="L127">                  .generateDoubleValue((double) mta.getMaxValues(&quot;distributionIndex&quot;)));</span>
+
+<span class="fc" id="L129">          mta.integerSbxCrossover(params); //probability</span>
+<span class="fc" id="L130">          break;</span>
+        case 1:
+<span class="fc" id="L132">          mta.nullCrossover(params);</span>
+<span class="fc" id="L133">          break;</span>
+        default:
+<span class="fc" id="L135">          params.put(&quot;distributionIndex&quot;,</span>
+<span class="fc" id="L136">              OperatorFacade</span>
+<span class="fc" id="L137">                  .generateDoubleValue((double) mta.getMaxValues(&quot;distributionIndex&quot;)));</span>
+
+<span class="fc" id="L139">          mta.integerSbxCrossover(params); //probability</span>
+          break;
+      }
+    }
+<span class="fc" id="L143">    mta.getOp().allocateParameters();</span>
+<span class="fc" id="L144">    return mta;</span>
+  }
+
+  /**
+   * Random op crossover facade.
+   *
+   * @param maxValues the max values
+   * @param solutionType the solution type
+   * @return the crossover facade
+   */
+  public static CrossoverFacade randomOp(HashMap&lt;String, Object&gt; maxValues, String solutionType) {
+<span class="fc" id="L155">    CrossoverFacade mta = new CrossoverFacade(maxValues, solutionType);</span>
+<span class="fc" id="L156">    return CrossoverFacade.randomOp(mta, maxValues);</span>
+  }
+
+  /**
+   * Creates a Sbx crossover.
+   *
+   * @param params the params
+   */
+  public void sbxCrossover(Map params) {
+<span class="fc" id="L165">    this.op = new SbxCrossover();</span>
+<span class="fc" id="L166">    this.op.setParameters(params);</span>
+<span class="fc" id="L167">  }</span>
+
+  /**
+   * Creates a Pmx crossover.
+   *
+   * @param params the params
+   */
+  public void pmxCrossover(Map params) {
+<span class="fc" id="L175">    this.op = new PmxCrossover();</span>
+<span class="fc" id="L176">    this.op.setParameters(params);</span>
+<span class="fc" id="L177">  }</span>
+
+  /**
+   * Creates a Single point crossover.
+   *
+   * @param params the params
+   */
+  public void singlePointCrossover(Map params) {
+<span class="fc" id="L185">    this.op = new OnePointCrossover();</span>
+<span class="fc" id="L186">    this.op.setParameters(params);</span>
+<span class="fc" id="L187">  }</span>
+
+  /**
+   * Creates a Blx alpha crossover.
+   *
+   * @param params the params
+   */
+  public void blxAlphaCrossover(Map params) {
+<span class="fc" id="L195">    this.op = new BlxAlphaCrossover();</span>
+<span class="fc" id="L196">    this.op.setParameters(params);</span>
+<span class="fc" id="L197">  }</span>
+
+  /**
+   * Creates a huxCrossover crossover.
+   *
+   * @param params the params
+   */
+  public void huxCrossover(Map params) {
+<span class="fc" id="L205">    this.op = new HuxCrossover();</span>
+<span class="fc" id="L206">    this.op.setParameters(params);</span>
+<span class="fc" id="L207">  }</span>
+
+  /**
+   * Creates a Null crossover.
+   *
+   * @param params the params
+   */
+  public void nullCrossover(Map params) {
+<span class="fc" id="L215">    this.op = new NullCross();</span>
+<span class="fc" id="L216">    this.op.setParameters(params);</span>
+<span class="fc" id="L217">  }</span>
+
+  /**
+   * Integer sbx crossover.
+   *
+   * @param params the params
+   */
+  public void integerSbxCrossover(Map&lt;String, Object&gt; params) {
+<span class="fc" id="L225">    this.op = new IntegerSbxCrossover();</span>
+<span class="fc" id="L226">    this.op.setParameters(params);</span>
+<span class="fc" id="L227">  }</span>
+
+  @Override
+  public OperatorFacade cloneMySelf() {
+<span class="fc" id="L231">    CrossoverFacade cf = new CrossoverFacade(maxValues, this.solutionType);</span>
+<span class="fc" id="L232">    Map&lt;String, Object&gt; params = this.getParams();</span>
+<span class="fc" id="L233">    Map&lt;String, Object&gt; dummy = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L234">    dummy.put(&quot;probability&quot;, 0.0);</span>
+<span class="fc bfc" id="L235" title="All 2 branches covered.">    if (op instanceof SbxCrossover) {</span>
+<span class="fc" id="L236">      dummy.put(&quot;distributionIndex&quot;, 0.0);</span>
+<span class="fc" id="L237">      cf.sbxCrossover(dummy);</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">    } else if (this.op instanceof IntegerSbxCrossover) {</span>
+<span class="fc" id="L239">      dummy.put(&quot;distributionIndex&quot;, 0.0);</span>
+<span class="fc" id="L240">      cf.integerSbxCrossover(dummy);</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">    } else if (this.op instanceof NullCross) {</span>
+<span class="fc" id="L242">      cf.nullCrossover(dummy);</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">    } else if (this.op instanceof HuxCrossover) {</span>
+<span class="fc" id="L244">      cf.huxCrossover(dummy);</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">    } else if (this.op instanceof PmxCrossover) {</span>
+<span class="fc" id="L246">      cf.pmxCrossover(dummy);</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">    } else if (this.op instanceof OnePointCrossover) {</span>
+<span class="fc" id="L248">      cf.singlePointCrossover(dummy);</span>
+<span class="pc bpc" id="L249" title="1 of 2 branches missed.">    } else if (op instanceof BlxAlphaCrossover) {</span>
+<span class="fc" id="L250">      dummy.put(&quot;alpha&quot;, 0.0);</span>
+<span class="fc" id="L251">      cf.blxAlphaCrossover(dummy);</span>
+    }
+<span class="fc" id="L253">    cf.setParams(params);</span>
+<span class="fc" id="L254">    return cf;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

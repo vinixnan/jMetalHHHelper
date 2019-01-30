@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AlgorithmBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.util</a> &gt; <span class="el_source">AlgorithmBuilder.java</span></div><h1>AlgorithmBuilder.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.util;
+
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.ParametersforAlgorithm;
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.ParametersforHeuristics;
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.interfaces.Operator;
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.interfaces.StandardMetaheuristic;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.algs.Gde3;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.algs.Ibea;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.algs.Nsgaii;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.algs.Paes;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.algs.Spea2;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.crossover.BlxAlphaCrossover;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.crossover.DifferentialEvolution;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.crossover.HuxCrossover;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.crossover.NullCross;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.crossover.OnePointCrossover;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.crossover.PmxCrossover;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.crossover.SbxCrossover;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation.BitFlipMuta;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation.NonUniformMuta;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation.NullMuta;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation.PermutationSwapMuta;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation.PolynomialMuta;
+import br.usp.poli.pcs.lti.jmetalhhhelper.imp.mutation.UniformMuta;
+
+import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.management.JMException;
+
+import org.uma.jmetal.operator.CrossoverOperator;
+import org.uma.jmetal.operator.MutationOperator;
+import org.uma.jmetal.operator.SelectionOperator;
+import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
+import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
+import org.uma.jmetal.operator.impl.selection.DifferentialEvolutionSelection;
+import org.uma.jmetal.problem.DoubleProblem;
+import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.comparator.CrowdingDistanceComparator;
+import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
+
+/**
+ * This class builds algorithms.
+ */
+/**
+ * The type Algorithm builder.
+ *
+ * @param &lt;S&gt; jMetal need.
+ */
+public class AlgorithmBuilder&lt;S extends Solution&lt;?&gt;&gt; {
+
+    /**
+     * The Problem.
+     */
+    protected Problem problem;
+
+    /**
+     * Instantiates a new Algorithm builder.
+     *
+     * @param problem the problem
+     */
+<span class="fc" id="L64">    public AlgorithmBuilder(Problem problem) {</span>
+<span class="fc" id="L65">        this.problem = problem;</span>
+<span class="fc" id="L66">    }</span>
+
+    /**
+     * Generate cross crossover operator.
+     *
+     * @param configParams the config params
+     * @return the crossover operator
+     * @throws JMException the jm exception
+     */
+    public CrossoverOperator generateCross(ParametersforHeuristics configParams) throws JMException {
+<span class="fc" id="L76">        Operator operator = null;</span>
+<span class="fc" id="L77">        Map&lt;String, Object&gt; parameters = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L78">        parameters.put(&quot;probability&quot;, configParams.getCrossoverProbality());</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        if (&quot;sbxCrossover&quot;.equalsIgnoreCase(configParams.getCrossoverName())) {</span>
+<span class="fc" id="L80">            parameters.put(&quot;distributionIndex&quot;, configParams.getCrossoverDistribution());</span>
+<span class="fc" id="L81">            operator = new SbxCrossover();</span>
+<span class="fc" id="L82">            operator.setParameters(parameters);</span>
+<span class="fc" id="L83">            operator.allocateParameters();</span>
+
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        } else if (&quot;blxAlphaCrossover&quot;.equalsIgnoreCase(configParams.getCrossoverName())) {</span>
+<span class="fc" id="L86">            parameters.put(&quot;alpha&quot;, configParams.getAlpha());</span>
+<span class="fc" id="L87">            operator = new BlxAlphaCrossover();</span>
+<span class="fc" id="L88">            operator.setParameters(parameters);</span>
+<span class="fc" id="L89">            operator.allocateParameters();</span>
+
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        } else if (&quot;huxCrossover&quot;.equalsIgnoreCase(configParams.getCrossoverName())) {</span>
+<span class="fc" id="L92">            operator = new HuxCrossover();</span>
+<span class="fc" id="L93">            operator.setParameters(parameters);</span>
+<span class="fc" id="L94">            operator.allocateParameters();</span>
+
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        } else if (&quot;onePointCrossover&quot;.equalsIgnoreCase(configParams.getCrossoverName())) {</span>
+<span class="fc" id="L97">            operator = new OnePointCrossover();</span>
+<span class="fc" id="L98">            operator.setParameters(parameters);</span>
+<span class="fc" id="L99">            operator.allocateParameters();</span>
+
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        } else if (&quot;NullCross&quot;.equalsIgnoreCase(configParams.getCrossoverName())) {</span>
+<span class="fc" id="L102">            operator = new NullCross();</span>
+<span class="fc" id="L103">            operator.setParameters(parameters);</span>
+<span class="fc" id="L104">            operator.allocateParameters();</span>
+
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        } else if (&quot;DifferentialEvolutionCrossover&quot;.equalsIgnoreCase(configParams.getCrossoverName())) {</span>
+<span class="nc" id="L107">            parameters.put(&quot;cr&quot;, configParams.getDeCr());</span>
+<span class="nc" id="L108">            parameters.put(&quot;f&quot;, configParams.getDeF());</span>
+<span class="nc" id="L109">            parameters.put(&quot;k&quot;, configParams.getDeK());</span>
+<span class="nc" id="L110">            parameters.put(&quot;variant&quot;, configParams.getDeVariant());</span>
+<span class="nc" id="L111">            operator = new DifferentialEvolution(0, 0, configParams.getDeVariant());</span>
+<span class="nc" id="L112">            operator.setParameters(parameters);</span>
+<span class="nc" id="L113">            operator.allocateParameters();</span>
+
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        } else if (&quot;pmxCrossover&quot;.equalsIgnoreCase(configParams.getCrossoverName())) {</span>
+<span class="fc" id="L116">            operator = new PmxCrossover();</span>
+<span class="fc" id="L117">            operator.setParameters(parameters);</span>
+<span class="fc" id="L118">            operator.allocateParameters();</span>
+
+        }
+<span class="fc" id="L121">        return (CrossoverOperator) operator;</span>
+    }
+
+    /**
+     * Generate muta mutation operator.
+     *
+     * @param configParams the config params
+     * @param maxIterations the max iterations
+     * @return the mutation operator
+     * @throws JMException the jm exception
+     */
+    public MutationOperator generateMuta(ParametersforHeuristics configParams, int maxIterations)
+            throws JMException {
+<span class="fc" id="L134">        Operator operator = null;</span>
+<span class="fc" id="L135">        Map&lt;String, Object&gt; parameters = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L136">        parameters.put(&quot;probability&quot;, configParams.getMutationProbability());</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        if (&quot;polynomialMutation&quot;.equalsIgnoreCase(configParams.getMutationName())) {</span>
+<span class="fc" id="L138">            parameters.put(&quot;distributionIndex&quot;, configParams.getMutationDistribution());</span>
+<span class="fc" id="L139">            operator = new PolynomialMuta();</span>
+<span class="fc" id="L140">            operator.setParameters(parameters);</span>
+<span class="fc" id="L141">            operator.allocateParameters();</span>
+
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        } else if (&quot;uniformMutation&quot;.equalsIgnoreCase(configParams.getMutationName())) {</span>
+<span class="fc" id="L144">            parameters.put(&quot;perturbation&quot;, configParams.getMutationPertubation());</span>
+<span class="fc" id="L145">            operator = new UniformMuta();</span>
+<span class="fc" id="L146">            operator.setParameters(parameters);</span>
+<span class="fc" id="L147">            operator.allocateParameters();</span>
+
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        } else if (&quot;nonUniformMutation&quot;.equalsIgnoreCase(configParams.getMutationName())) {</span>
+<span class="fc" id="L150">            parameters.put(&quot;perturbation&quot;, configParams.getMutationPertubation());</span>
+<span class="fc" id="L151">            parameters.put(&quot;maxIterations&quot;, maxIterations);</span>
+<span class="fc" id="L152">            operator = new NonUniformMuta();</span>
+<span class="fc" id="L153">            operator.setParameters(parameters);</span>
+<span class="fc" id="L154">            operator.allocateParameters();</span>
+
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        } else if (&quot;bitFlipMutation&quot;.equalsIgnoreCase(configParams.getMutationName())) {</span>
+<span class="fc" id="L157">            operator = new BitFlipMuta();</span>
+<span class="fc" id="L158">            operator.setParameters(parameters);</span>
+<span class="fc" id="L159">            operator.allocateParameters();</span>
+
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        } else if (&quot;nullMutation&quot;.equalsIgnoreCase(configParams.getMutationName())) {</span>
+<span class="fc" id="L162">            operator = new NullMuta();</span>
+<span class="fc" id="L163">            operator.setParameters(parameters);</span>
+<span class="fc" id="L164">            operator.allocateParameters();</span>
+
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">        } else if (&quot;PermutationSwapMutation&quot;.equalsIgnoreCase(configParams.getMutationName())) {</span>
+<span class="fc" id="L167">            operator = new PermutationSwapMuta();</span>
+<span class="fc" id="L168">            operator.setParameters(parameters);</span>
+<span class="fc" id="L169">            operator.allocateParameters();</span>
+
+        }
+<span class="fc" id="L172">        return (MutationOperator) operator;</span>
+    }
+
+    /**
+     * Generate selection selection operator.
+     *
+     * @return the selection operator
+     * @throws JMException the jm exception
+     */
+    public SelectionOperator generateSelection() throws JMException {
+<span class="fc" id="L182">        SelectionOperator se = new BinaryTournamentSelection();</span>
+<span class="fc" id="L183">        return se;</span>
+    }
+
+    /**
+     * Create ibea standard meta-heuristic.
+     *
+     * @param configAlg the config alg
+     * @param configHeuristic the config heuristic
+     * @return the standard meta-heuristic
+     * @throws JMException the jm exception
+     */
+    public StandardMetaheuristic createIbea(ParametersforAlgorithm configAlg,
+            ParametersforHeuristics configHeuristic) throws JMException {
+<span class="fc" id="L196">        SelectionOperator selection = this.generateSelection();</span>
+<span class="fc" id="L197">        CrossoverOperator crossover = this.generateCross(configHeuristic);</span>
+<span class="fc" id="L198">        MutationOperator mutation = this.generateMuta(configHeuristic, configAlg.getMaxIteractions());</span>
+<span class="fc" id="L199">        StandardMetaheuristic algorithm = new Ibea(problem, configAlg.getPopulationSize(),</span>
+<span class="fc" id="L200">                configAlg.getArchiveSize(),</span>
+<span class="fc" id="L201">                configAlg.getMaxIteractions() * configAlg.getPopulationSize(),</span>
+                selection, crossover, mutation);
+<span class="fc" id="L203">        return algorithm;</span>
+    }
+
+    /**
+     * Create nsga-ii standard meta-heuristic.
+     *
+     * @param configAlg the config alg
+     * @param configHeuristic the config heuristic
+     * @return the standard meta-heuristic
+     * @throws JMException the jm exception
+     */
+    public StandardMetaheuristic createNsgaii(ParametersforAlgorithm configAlg,
+            ParametersforHeuristics configHeuristic) throws JMException {
+<span class="fc" id="L216">        SelectionOperator selection = this.generateSelection();</span>
+<span class="fc" id="L217">        CrossoverOperator crossover = this.generateCross(configHeuristic);</span>
+<span class="fc" id="L218">        MutationOperator mutation = this.generateMuta(configHeuristic, configAlg.getMaxIteractions());</span>
+
+<span class="fc" id="L220">        StandardMetaheuristic algorithm = new Nsgaii(problem,</span>
+<span class="fc" id="L221">                configAlg.getMaxIteractions() * configAlg.getPopulationSize(),</span>
+<span class="fc" id="L222">                configAlg.getPopulationSize(), crossover,</span>
+                mutation, selection, new CrowdingDistanceComparator&lt;S&gt;(), new SequentialSolutionListEvaluator());
+<span class="fc" id="L224">        return algorithm;</span>
+    }
+
+    /**
+     * Create spea 2 standard meta-heuristic.
+     *
+     * @param configAlg the config alg
+     * @param configHeuristic the config heuristic
+     * @return the standard meta-heuristic
+     * @throws JMException the jm exception
+     */
+    public StandardMetaheuristic createSpea2(ParametersforAlgorithm configAlg,
+            ParametersforHeuristics configHeuristic) throws JMException {
+<span class="fc" id="L237">        SelectionOperator selection = this.generateSelection();</span>
+<span class="fc" id="L238">        CrossoverOperator crossover = this.generateCross(configHeuristic);</span>
+<span class="fc" id="L239">        MutationOperator mutation = this.generateMuta(configHeuristic, configAlg.getMaxIteractions());</span>
+<span class="fc" id="L240">        StandardMetaheuristic algorithm = new Spea2(problem, configAlg.getMaxIteractions(),</span>
+<span class="fc" id="L241">                configAlg.getPopulationSize(), crossover,</span>
+                mutation, selection, new SequentialSolutionListEvaluator());
+<span class="fc" id="L243">        return algorithm;</span>
+    }
+
+    /**
+     * Create spea 2 standard meta-heuristic.
+     *
+     * @param configAlg the config alg
+     * @param configHeuristic the config heuristic
+     * @return the standard meta-heuristic
+     * @throws JMException the jm exception
+     */
+    public StandardMetaheuristic createGde3(ParametersforAlgorithm configAlg,
+            ParametersforHeuristics configHeuristic) throws JMException {
+<span class="nc" id="L256">        configHeuristic.setDeCr(0.2);//TEMP @TODO new parameter file</span>
+<span class="nc" id="L257">        configHeuristic.setDeF(0.2);</span>
+<span class="nc" id="L258">        CrossoverOperator crossover = this.generateCross(configHeuristic);</span>
+<span class="nc" id="L259">        StandardMetaheuristic algorithm = new Gde3((DoubleProblem) problem,</span>
+<span class="nc" id="L260">                configAlg.getPopulationSize(), configAlg.getMaxIteractions()</span>
+<span class="nc" id="L261">                * configAlg.getPopulationSize(), new DifferentialEvolutionSelection(),</span>
+                (DifferentialEvolutionCrossover) crossover,
+                new SequentialSolutionListEvaluator());
+<span class="nc" id="L264">        return algorithm;</span>
+    }
+
+    /**
+     * Create spea 2 standard meta-heuristic.
+     *
+     * @param configAlg the config alg
+     * @param configHeuristic the config heuristic
+     * @return the standard meta-heuristic
+     * @throws JMException the jm exception
+     */
+    public StandardMetaheuristic createPaes(ParametersforAlgorithm configAlg,
+            ParametersforHeuristics configHeuristic) throws JMException {
+<span class="nc" id="L277">        int biSections = 3;</span>
+<span class="nc" id="L278">        MutationOperator mutation = this.generateMuta(configHeuristic, configAlg.getMaxIteractions());</span>
+<span class="nc" id="L279">        StandardMetaheuristic algorithm = new Paes(problem, configAlg.getPopulationSize(), configAlg.getMaxIteractions()</span>
+<span class="nc" id="L280">                * configAlg.getPopulationSize(), biSections, mutation);</span>
+<span class="nc" id="L281">        return algorithm;</span>
+    }
+
+    /**
+     * Create standard metaheuristic.
+     *
+     * @param configAlg the config alg
+     * @param configHeuristic the config heuristic
+     * @return the standard metaheuristic
+     * @throws JMException the jm exception
+     * @throws FileNotFoundException the file not found exception
+     */
+    public StandardMetaheuristic create(ParametersforAlgorithm configAlg,
+            ParametersforHeuristics configHeuristic) throws JMException, FileNotFoundException {
+<span class="pc bpc" id="L295" title="4 of 6 branches missed.">        switch (configAlg.getAlgorithmName()) {</span>
+            case &quot;Ibea&quot;:
+<span class="nc" id="L297">                return createIbea(configAlg, configHeuristic);</span>
+            case &quot;Nsgaii&quot;:
+<span class="fc" id="L299">                return this.createNsgaii(configAlg, configHeuristic);</span>
+            case &quot;Spea2&quot;:
+<span class="fc" id="L301">                return createSpea2(configAlg, configHeuristic);</span>
+            case &quot;Gde3&quot;:
+<span class="nc" id="L303">                return createGde3(configAlg, configHeuristic);</span>
+            case &quot;Paes&quot;:
+<span class="nc" id="L305">                return createPaes(configAlg, configHeuristic);</span>
+            default:
+<span class="nc" id="L307">                System.err.println(&quot;Algorithm not found&quot;);</span>
+<span class="nc" id="L308">                return null;</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

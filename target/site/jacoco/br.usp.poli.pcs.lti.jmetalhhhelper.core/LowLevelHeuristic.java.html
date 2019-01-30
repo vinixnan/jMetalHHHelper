@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LowLevelHeuristic.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.core</a> &gt; <span class="el_source">LowLevelHeuristic.java</span></div><h1>LowLevelHeuristic.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.core;
+
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.interfaces.Operator;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.CrossoverFacade;
+import br.usp.poli.pcs.lti.jmetalhhhelper.util.MutationFacade;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * The type Low level heuristic.
+ * This abstract class is an implementation of a Low-Level Heuristic
+ * (LowLevelHeuristic).
+ */
+public abstract class LowLevelHeuristic implements Serializable {
+
+  /**
+   * The associated crossover. It uses CrossoverFacade class.
+   */
+  protected CrossoverFacade crossover;
+
+  /**
+   * The associated mutation. It uses MutationFacade class.
+   */
+  protected MutationFacade mutation;
+
+  /**
+   * The max Values for each operator parameter. Normally you should use 1.0
+   * and 100.0, then random values would be bounded by them.
+   */
+  protected HashMap&lt;String, Object&gt; maxValues;
+
+  /**
+   * The type of solutions.
+   */
+  protected String solutionType;
+
+  /**
+   * Constructor with parameters
+   *
+   * @param crossover instance of CrossoverFacade.
+   * @param mutation instance of MutationFacade.
+   * @param maxValues HashMap containing max values for random attributes generation.
+   * @param solutionType The type of solutions.
+   */
+  public LowLevelHeuristic(CrossoverFacade crossover, MutationFacade mutation,
+      HashMap&lt;String, Object&gt; maxValues,
+<span class="nc" id="L49">      String solutionType) {</span>
+<span class="nc" id="L50">    this.crossover = crossover;</span>
+<span class="nc" id="L51">    this.mutation = mutation;</span>
+<span class="nc" id="L52">    this.maxValues = maxValues;</span>
+<span class="nc" id="L53">    this.solutionType = solutionType;</span>
+<span class="nc" id="L54">  }</span>
+
+  /**
+   * Default Constructor.
+   */
+<span class="nc" id="L59">  public LowLevelHeuristic() {</span>
+<span class="nc" id="L60">    this.crossover = null;</span>
+<span class="nc" id="L61">    this.mutation = null;</span>
+<span class="nc" id="L62">  }</span>
+
+
+  /**
+   * Gets crossover.
+   *
+   * @return CrossoverFacade (crossover).
+   */
+  public CrossoverFacade getCrossover() {
+<span class="fc" id="L71">    return crossover;</span>
+  }
+
+  /**
+   * Sets crossover.
+   *
+   * @param crossover sets CrossoverFacade.
+   */
+  public void setCrossover(CrossoverFacade crossover) {
+<span class="fc" id="L80">    this.crossover = crossover;</span>
+<span class="fc" id="L81">  }</span>
+
+  /**
+   * Gets mutation.
+   *
+   * @return MutationFacade (mutation).
+   */
+  public MutationFacade getMutation() {
+<span class="fc" id="L89">    return mutation;</span>
+  }
+
+  /**
+   * Sets mutation.
+   *
+   * @param mutation sets MutationFacade.
+   */
+  public void setMutation(MutationFacade mutation) {
+<span class="fc" id="L98">    this.mutation = mutation;</span>
+<span class="fc" id="L99">  }</span>
+
+  /**
+   * Creates a HashMap, adds crossover and mutation operators, and converts
+   * all crossover and mutation attributes to add to HashMap.
+   *
+   * @return HashMap containing operator and its parameters.
+   */
+  public Map&lt;String, Object&gt; allParametersToHash() {
+<span class="fc" id="L108">    Map&lt;String, Object&gt; allparameterAction = new HashMap();</span>
+<span class="fc" id="L109">    allparameterAction.put(&quot;crossover&quot;, this.crossover.getOp());</span>
+<span class="fc" id="L110">    Map&lt;String, Object&gt; params = this.crossover.getParams();</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">    for (Map.Entry&lt;String, Object&gt; entry : params.entrySet()) {</span>
+<span class="fc" id="L112">      allparameterAction.put(entry.getKey(), entry.getValue());</span>
+<span class="fc" id="L113">    }</span>
+<span class="fc" id="L114">    allparameterAction.put(&quot;mutation&quot;, this.mutation.getOp());</span>
+<span class="fc" id="L115">    params = this.mutation.getParams();</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">    for (Map.Entry&lt;String, Object&gt; entry : params.entrySet()) {</span>
+<span class="fc" id="L117">      allparameterAction.put(entry.getKey(), entry.getValue());</span>
+<span class="fc" id="L118">    }</span>
+<span class="fc" id="L119">    return allparameterAction;</span>
+  }
+
+  /**
+   * Sets HashMap values to crossover and mutation attributes
+   *
+   * @param allparameterAction an HashMap containing operators with its parameters.
+   */
+  public void hashToParameter(HashMap&lt;String, Object&gt; allparameterAction) {
+<span class="fc" id="L128">    this.crossover.setOp((Operator) allparameterAction.get(&quot;crossover&quot;));</span>
+<span class="fc" id="L129">    this.mutation.setOp((Operator) allparameterAction.get(&quot;mutation&quot;));</span>
+<span class="fc" id="L130">    this.crossover.setOp(this.crossover.cloneMyOperator());</span>
+<span class="fc" id="L131">    this.mutation.setOp(this.mutation.cloneMyOperator());</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">    for (Map.Entry&lt;String, Object&gt; entry : allparameterAction.entrySet()) {</span>
+<span class="fc" id="L133">      String keyname = entry.getKey();</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">      if (keyname.startsWith(&quot;cross_&quot;)) {</span>
+<span class="fc" id="L135">        this.crossover.setAttributeObjectVerify(keyname.replace(&quot;cross_&quot;, &quot;&quot;),</span>
+<span class="fc" id="L136">            allparameterAction.get(keyname));</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">      } else if (keyname.startsWith(&quot;muta_&quot;)) {</span>
+<span class="fc" id="L138">        this.mutation.setAttributeObjectVerify(keyname.replace(&quot;muta_&quot;, &quot;&quot;),</span>
+<span class="fc" id="L139">            allparameterAction.get(keyname));</span>
+      }
+<span class="fc" id="L141">    }</span>
+<span class="fc" id="L142">  }</span>
+
+  /**
+   * Randomly generates crossover and mutation attributes considering
+   * solutionType and maxValues.
+   */
+  public void randomize() {
+<span class="fc" id="L149">    randomize(0);</span>
+<span class="fc" id="L150">  }</span>
+
+  /**
+   * Recreate crossover and mutation automatically.
+   *
+   * @param currentEval current evaluation
+   */
+  public void randomize(int currentEval) {
+<span class="fc" id="L158">    this.crossover = CrossoverFacade.randomOp(this.maxValues, solutionType);</span>
+<span class="fc" id="L159">    this.mutation = MutationFacade.randomOp(this.maxValues, currentEval, solutionType);</span>
+<span class="fc" id="L160">  }</span>
+
+  @Override
+  public String toString() {
+<span class="fc" id="L164">    return &quot;Action{&quot; + &quot;crossover=&quot; + crossover.toString() + &quot;, mutation=&quot; + mutation.toString()</span>
+        + '}';
+  }
+
+  /**
+   * Gets max values.
+   *
+   * @return the max values
+   */
+  public HashMap&lt;String, Object&gt; getMaxValues() {
+<span class="fc" id="L174">    return maxValues;</span>
+  }
+
+  /**
+   * Sets max values.
+   *
+   * @param maxValues the max values
+   */
+  public void setMaxValues(HashMap&lt;String, Object&gt; maxValues) {
+<span class="fc" id="L183">    this.maxValues = maxValues;</span>
+<span class="fc" id="L184">  }</span>
+
+  /**
+   * Gets solution type.
+   *
+   * @return the solution type
+   */
+  public String getSolutionType() {
+<span class="fc" id="L192">    return solutionType;</span>
+  }
+
+  /**
+   * Sets solution type.
+   *
+   * @param solutionType the solution type
+   */
+  public void setSolutionType(String solutionType) {
+<span class="fc" id="L201">    this.solutionType = solutionType;</span>
+<span class="fc" id="L202">  }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

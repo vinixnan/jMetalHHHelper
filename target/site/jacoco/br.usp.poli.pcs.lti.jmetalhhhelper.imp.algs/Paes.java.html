@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Paes.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jMetalHyperHeuristicHelper</a> &gt; <a href="index.source.html" class="el_package">br.usp.poli.pcs.lti.jmetalhhhelper.imp.algs</a> &gt; <span class="el_source">Paes.java</span></div><h1>Paes.java</h1><pre class="source lang-java linenums">package br.usp.poli.pcs.lti.jmetalhhhelper.imp.algs;
+
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.OpManager;
+import br.usp.poli.pcs.lti.jmetalhhhelper.core.interfaces.StandardMetaheuristic;
+import java.util.ArrayList;
+import java.util.List;
+import org.uma.jmetal.algorithm.multiobjective.paes.PAES;
+import org.uma.jmetal.operator.CrossoverOperator;
+import org.uma.jmetal.operator.MutationOperator;
+import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.solution.Solution;
+
+/**
+ *
+ * @author vinicius
+ */
+public class Paes&lt;S extends Solution&lt;?&gt;&gt; extends PAES&lt;S&gt; implements StandardMetaheuristic&lt;S&gt; {
+
+    /**
+     * Low-Level Heuristic Selector.
+     */
+    protected OpManager selector;
+
+    /**
+     * Max Number of real population generation.
+     */
+    protected int realPopMaxGeneration;
+
+    protected int maxIterations;
+    protected int iterations;
+
+    protected List&lt;S&gt; offspringPopulation;
+
+    public Paes(Problem&lt;S&gt; problem, int archiveSize, int maxEvaluations, int biSections, MutationOperator&lt;S&gt; mutationOperator) {
+<span class="nc" id="L35">        super(problem, archiveSize, maxEvaluations, biSections, mutationOperator);</span>
+<span class="nc" id="L36">        selector = new OpManager();</span>
+<span class="nc" id="L37">        selector.setCrossoverOperator(null);</span>
+<span class="nc" id="L38">        selector.setMutationOperator(mutationOperator);</span>
+<span class="nc" id="L39">        maxIterations = maxEvaluations / archiveSize;</span>
+<span class="nc" id="L40">        iterations = 0;</span>
+<span class="nc" id="L41">    }</span>
+
+    @Override
+    public int getMaxEvaluations() {
+<span class="nc" id="L45">        return this.maxEvaluations;</span>
+    }
+
+    @Override
+    public int getIterations() {
+<span class="nc" id="L50">        return this.iterations;</span>
+    }
+
+    @Override
+    public OpManager getSelector() {
+<span class="nc" id="L55">        return selector;</span>
+    }
+
+    @Override
+    public void setSelector(OpManager selector) {
+<span class="nc" id="L60">        this.selector = selector;</span>
+<span class="nc" id="L61">    }</span>
+
+    public int getRealPopMaxGeneration() {
+<span class="nc" id="L64">        return realPopMaxGeneration;</span>
+    }
+
+    public void setRealPopMaxGeneration(int realPopMaxGeneration) {
+<span class="nc" id="L68">        this.realPopMaxGeneration = realPopMaxGeneration;</span>
+<span class="nc" id="L69">    }</span>
+
+    @Override
+    public int getMaxIterations() {
+<span class="nc" id="L73">        return maxIterations;</span>
+    }
+
+    public void setMaxIterations(int maxIterations) {
+<span class="nc" id="L77">        this.maxIterations = maxIterations;</span>
+<span class="nc" id="L78">    }</span>
+
+    @Override
+    public int getPopulationSize() {
+<span class="nc" id="L82">        return archiveSize;</span>
+    }
+
+    @Override
+    public void setPopulationSize(int populationSize) {
+<span class="nc" id="L87">        this.archiveSize = populationSize;</span>
+<span class="nc" id="L88">    }</span>
+
+    public int getEvaluations() {
+<span class="nc" id="L91">        return evaluations;</span>
+    }
+
+    public void setEvaluations(int evaluations) {
+<span class="nc" id="L95">        this.evaluations = evaluations;</span>
+<span class="nc" id="L96">    }</span>
+
+    @Override
+    public void setIterations(int iterations) {
+<span class="nc" id="L100">        this.iterations = iterations;</span>
+<span class="nc" id="L101">    }</span>
+
+    @Override
+    protected boolean isStoppingConditionReached() {
+<span class="nc bnc" id="L105" title="All 4 branches missed.">        return evaluations &gt;= maxEvaluations &amp;&amp; iterations &gt;= maxIterations;</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    @Override
+    protected List&lt;S&gt; reproduction(List&lt;S&gt; population) {
+<span class="nc" id="L111">        S mutatedSolution = (S) population.get(0).copy();</span>
+<span class="nc" id="L112">        mutationOperator.execute(mutatedSolution);</span>
+
+<span class="nc" id="L114">        List&lt;S&gt; mutationSolutionList = new ArrayList&lt;&gt;(1);</span>
+<span class="nc" id="L115">        mutationSolutionList.add(mutatedSolution);</span>
+<span class="nc" id="L116">        return mutationSolutionList;</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    @Override
+    protected List&lt;S&gt; replacement(List&lt;S&gt; population, List&lt;S&gt; offspringPopulation) {
+<span class="nc" id="L122">        S current = population.get(0);</span>
+<span class="nc" id="L123">        S mutatedSolution = offspringPopulation.get(0);</span>
+
+<span class="nc" id="L125">        int flag = comparator.compare(current, mutatedSolution);</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (flag == 1) {</span>
+<span class="nc" id="L127">            current = (S) mutatedSolution.copy();</span>
+<span class="nc" id="L128">            archive.add(mutatedSolution);</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">        } else if (flag == 0) {</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">            if (archive.add(mutatedSolution)) {</span>
+<span class="nc" id="L131">                population.set(0, test(current, mutatedSolution, archive));</span>
+            }
+        }
+
+<span class="nc" id="L135">        population.set(0, current);</span>
+<span class="nc" id="L136">        return population;</span>
+    }
+
+    @Override
+    public void initMetaheuristic() {
+<span class="nc" id="L141">        population = createInitialPopulation();</span>
+<span class="nc" id="L142">        population = evaluatePopulation(population);</span>
+<span class="nc" id="L143">        initProgress();</span>
+<span class="nc" id="L144">        iterations=1;</span>
+<span class="nc" id="L145">    }</span>
+
+    @Override
+    public void generateNewPopulation() {
+<span class="nc" id="L149">        this.executeMethod();</span>
+<span class="nc" id="L150">        population = replacement(population, offspringPopulation);</span>
+<span class="nc" id="L151">        updateProgress();</span>
+<span class="nc" id="L152">        iterations++;</span>
+<span class="nc" id="L153">    }</span>
+
+    @Override
+    public List&lt;?&gt; executeMethod() {
+<span class="nc" id="L157">        List&lt;S&gt; matingPopulation = selection(population);</span>
+<span class="nc" id="L158">        offspringPopulation = reproduction(matingPopulation);</span>
+<span class="nc" id="L159">        offspringPopulation = evaluatePopulation(offspringPopulation);</span>
+<span class="nc" id="L160">        return offspringPopulation;</span>
+    }
+
+    @Override
+    public void run() {
+<span class="nc" id="L165">        this.initMetaheuristic();</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">        while (!isStoppingConditionReached()) {</span>
+<span class="nc" id="L167">            this.generateNewPopulation();</span>
+        }
+<span class="nc" id="L169">    }</span>
+
+    @Override
+    public List&lt;?&gt; updateMainPopulation(List&lt;S&gt; list) {
+<span class="nc" id="L173">        throw new UnsupportedOperationException(&quot;Not supported yet.&quot;); //To change body of generated methods, choose Tools | Templates.</span>
+    }
+
+    @Override
+    public List&lt;S&gt; getRealpop() {
+<span class="nc" id="L178">        throw new UnsupportedOperationException(&quot;Not supported yet.&quot;); //To change body of generated methods, choose Tools | Templates.</span>
+    }
+
+    @Override
+    public void setCrossoverOperator(CrossoverOperator&lt;S&gt; co) {
+
+<span class="nc" id="L184">    }</span>
+
+    @Override
+    public void setMutationOperator(MutationOperator&lt;S&gt; mo) {
+<span class="nc" id="L188">        this.mutationOperator = mo;</span>
+<span class="nc" id="L189">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>
